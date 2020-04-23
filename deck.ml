@@ -1,10 +1,10 @@
 open Card
 
-type deck = 
+type deck = card list
 
-(** The type of values representing an exit. *)
-type exit = {
-  name: exit_name;
-  exit_id: room_id
-}
-
+let init () =
+  let rec helper counter acc =
+    if counter > 51 then acc
+    else helper (counter + 1) (make_card counter)::acc
+  in
+  helper 0 []

@@ -1,6 +1,10 @@
 ### Starting build.
-# Target: card.ml.depends, tags: { extension:ml, file:card.ml, ocaml, ocamldep, quiet }
+# Target: card.mli.depends, tags: { extension:mli, file:card.mli, ocaml, ocamldep, quiet, traverse }
+ocamlfind ocamldep -modules card.mli > card.mli.depends
+# Target: card.cmi, tags: { byte, compile, extension:mli, file:card.mli, interf, ocaml, quiet, traverse }
+ocamlfind ocamlc -c -o card.cmi card.mli
+# Target: card.ml.depends, tags: { extension:ml, file:card.ml, ocaml, ocamldep, quiet, traverse }
 ocamlfind ocamldep -modules card.ml > card.ml.depends
-# Target: card.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:card.cmo, file:card.ml, implem, ocaml, quiet }
+# Target: card.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:card.cmo, file:card.ml, implem, ocaml, quiet, traverse }
 ocamlfind ocamlc -c -o card.cmo card.ml
 # Compilation successful.
