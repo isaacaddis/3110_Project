@@ -1,0 +1,6 @@
+### Starting build.
+# Target: card.ml.depends, tags: { extension:ml, file:card.ml, ocaml, ocamldep, quiet }
+ocamlfind ocamldep -modules card.ml > card.ml.depends
+# Target: card.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:card.cmo, file:card.ml, implem, ocaml, quiet }
+ocamlfind ocamlc -c -o card.cmo card.ml
+# Compilation successful.
