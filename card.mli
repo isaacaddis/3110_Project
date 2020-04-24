@@ -9,5 +9,5 @@ val to_string : card -> string
 (** [make_card f n] initializes a card with face value [f] and the [n]th
     time the card has been made, corresponding to one of for suits.
     Requires: [f] is in [0..12], 
-              [n] is in [1...4]**)
+              [n] is in [1...4] **)
 val make_card : int -> int -> card
