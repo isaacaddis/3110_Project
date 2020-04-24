@@ -1,4 +1,6 @@
 type suit = Diamonds | Spades | Hearts | Clubs
+type card' = Jack | Queen | King | Ace | Int of face_value
+type card = (int * card' * suit)
 
 let suit_to_string s =
   match s with
@@ -7,27 +9,29 @@ let suit_to_string s =
   | Hearts -> "Hearts"
   | Clubs -> "Clubs"
 
-type card = (int * suit)
+let card_to_string (card': card') : string =
+  match card' with
+  | Jack  -> "J"
+  | Queen -> "Q"
+  | King -> "K"
+  | Ace -> "A"
+  | Int xs -> string_of_int xs
 
 let to_string c =
-  match c with
-  | (v, s) when v <= 10 && v >= 2 ->
-    Int.to_string v ^ " of " ^ suit_to_string s
-  | (v, s) when v = 1 ->
-    "Ace of " ^ suit_to_string s
-  | (v, s) when v = 11 ->
-    "Jack of " ^ suit_to_string s
-  | (v, s) when v = 12 ->
-    "Queen of " ^ suit_to_string s
-  | (v, s) when v = 13 ->
-    "King of " ^ suit_to_string s
-  | _ -> failwith "Integer not between 1 and 13"
+  card_to_string (snd c)
 
-(** value is between 1 and 52 *)
-let make_card value =
-  match value with
-  | v when v mod 4 = 0 -> (v / 4, Diamonds)
-  | v when v mod 4 = 1 -> (v / 4, Spades)
-  | v when v mod 4 = 2 -> (v / 4, Hearts)
-  | v when v mod 4 = 3 -> (v / 4, Clubs)
-  | _ -> failwith "failure"
+let match_suit s =
+  match s with
+  | 1 -> Diamonds
+  | 2 -> Spades
+  | 3 -> Hearts
+  | 4 -> Clubs
+
+let make_card v n =
+  let s = match_suit n in
+  match v with
+  | 12 -> (10, King, s)
+  | 11 -> (10, Queen, s)
+  | 10 -> (10, Jack, s)
+  | 1 -> (1, Ace, s)
+  | x -> (x, Int x, s)

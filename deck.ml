@@ -18,3 +18,8 @@ let draw_card d =
   match d with
   | [] -> failwith "there are no more cards to deal"
   | x :: xs -> (x, xs)
+
+let draw_two_cards d =
+  match d with
+  | [] -> failwith "there are no more cards to deal"
+  | x :: y :: xs -> (x, y, xs)

@@ -6,4 +6,7 @@ let init_player h =
 let rec pts = function
   | [] -> 0
   | x :: xs -> x + (pts xs)
+
+let hand p =
+  p.hand
   
