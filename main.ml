@@ -6,7 +6,7 @@ let print_init_st st =
   let player = player st in
   let dealer = dealer st in
   let player_hand = hand player |> String.concat ", " in
-  let dealer_hand = hand dealer |> String.concat ", " |> List.hd in
+  let dealer_hand = hand dealer |> List.hd in
   let player_msg = "Your hand: " ^ player_hand in
   let dealer_msg = "Dealer's hand: " ^ dealer_hand ^ ", and another facedown" in
   print_endline player_msg;
@@ -21,4 +21,4 @@ let main () =
   ANSITerminal.(print_string [green] "\n Welcome to blackjack. \n");
   play_game
 
-
+let () = main ()
