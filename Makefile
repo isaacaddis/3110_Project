@@ -3,6 +3,7 @@ OBJECTS=$(MODULES:=.cmo)
 MLS=$(MODULES:=.ml)
 MLIS=$(MODULES:=.mli)
 TEST=test.byte
+MAIN=main.byte
 OCAMLBUILD=ocamlbuild -use-ocamlfind -plugin-tag 'package(bisect_ppx-ocamlbuild)'
 PKGS=unix,oUnit,str,ANSITerminal
 
@@ -40,7 +41,7 @@ docs-public: build
 
 docs-private: build
 	mkdir -p doc.private
-	ocamlfind ocamldoc -I _build -package $(PKGS),ANSITerminal \
+	ocamlfind ocamldoc -I _build -package $(PKGS) \
 		-html -stars -d doc.private \
 		-inv-merge-ml-mli -m A -hide-warnings $(MLIS) $(MLS)
 

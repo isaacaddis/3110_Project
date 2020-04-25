@@ -18,7 +18,7 @@ let play_game =
 
 
 let main () = 
-  ANSITerminal.(print_string [green] "\n Welcome to blackjack. \n");
+  print_endline "Welcome to blackjack!";
   play_game
 
 let () = main ()
