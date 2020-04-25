@@ -1,17 +1,24 @@
+open Card
 open Deck
 open Player
 
-type t = {deck: deck, dealer: dealer, player:player}
+module State = struct
 
-let init_state =
-  let d = shuffle_deck in
-  let d' = draw_two_cards d in
-  let d'' = draw_two_cards (snd d') in
-  { deck = snd d''; dealer = fst d'; 
-    player = fst d''}
+  type t = {deck: deck; dealer: player; player: player}
 
-let dealer s =
-  s.dealer
+  let thrd = (fun (_,_,z) -> z)
+  let combine = (fun (x,y,_) -> x :: y :: [])
 
-let player s =
-  s.player
+  let init_state =
+    let d = shuffle_deck in
+    let d' = draw_two_cards (d) in
+    let d'' = draw_two_cards (deck d') in
+    { deck = (deck d''); dealer = { hand = cards_to_string d' }; 
+      player = { hand = cards_to_string d'' } }
+
+  let dealer s =
+    s.dealer
+
+  let player s =
+    s.player
+end
