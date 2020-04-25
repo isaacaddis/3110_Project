@@ -34,6 +34,7 @@ let shuffle_deck =
       make_deck (n+1) ((make_card (n mod 13) s ) :: acc)
     | _ -> acc
   and shuffle d =
+    Random.self_init ();
     let nd = List.map (fun c -> (Random.bits (), c)) d in
     let sond = List.sort compare nd in
     List.map snd sond
