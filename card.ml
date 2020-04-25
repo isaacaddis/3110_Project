@@ -24,7 +24,7 @@ module Card = struct
 
   let to_string c =
     match c with
-    | (_, x, _) -> card_to_string x
+    | (_, x, s) -> card_to_string x ^ " of " ^ suit_to_string s
 
   let match_suit s =
     match s with
@@ -41,6 +41,7 @@ module Card = struct
     | 11 -> (10, Queen, s)
     | 10 -> (10, Jack, s)
     | 1 -> (1, Ace, s)
+    | 0 -> (10,Int 10, s)
     | x -> (x, Int x, s)
 
 end

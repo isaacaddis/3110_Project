@@ -1,2 +1,16 @@
 ### Starting build.
-# Compilation successful.
+Backtrace:
+                      - Failed to build the target test.byte
+                          - Building test.byte:
+                              - Building test.cmo:
+                                  - Failed to build all of these:
+                                      - Building test.ml:
+                                          - Failed to build all of these:
+                                              - Building test.mly
+                                              - Building test.mll
+                                      - Building test.mli:
+                                          - Building test.mly
+                                      - Building test.mlpack
+                                      - Building test.mli:
+                                          - Building test.mly
+# Compilation unsuccessful.
