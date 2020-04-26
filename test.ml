@@ -4,14 +4,20 @@ open Deck
 open Player
 open State
 
+let eq_test name a b = (name >:: fun _ -> assert_equal a b)
+
 let card_tests = [
-  let jack = make_card 10 1 in
-  "to_string" >:: fun _ -> assert_equal (to_string jack) "J of Diamonds"
+  eq_test "to_string jack" (make_card 10 1 |> to_string) "J of Diamonds";
+  eq_test "get_val king" (make_card 12 1 |> get_val) 10;
+  eq_test "get_val ace" (make_card 1 1 |> get_val) 1;
 ]
 
 let deck_tests = []
 
-let player_tests = []
+let player_tests = [
+  let hand = (make_card 1 1) :: (make_card 1 2) :: (make_card 9 1) :: [] in
+  eq_test "Player.points" (points hand) 21;
+]
 
 let state_tests = []
 
