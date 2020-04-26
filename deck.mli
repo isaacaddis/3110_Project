@@ -10,4 +10,6 @@ val draw_two_cards : deck -> res
 
 val deck : res -> deck
 
+val draw_card : deck -> res
+
 val cards_to_string : res -> string list

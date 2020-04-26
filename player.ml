@@ -6,7 +6,6 @@ let rec pts = function
   | [] -> 0
   | x :: xs -> (get_val x) + (pts xs)
 
-
 (** [p_help hnd acc] is a helper function that returns a pair containing the 
     number of aces in a card list and the point value of the non ace cards*)
 let rec p_help hnd acc=  match hnd with

@@ -15,12 +15,14 @@ let card_tests = [
 let deck_tests = []
 
 let player_tests = 
-  let hand = (make_card 1 1) :: (make_card 1 2) :: (make_card 9 1) :: [] in
+  let cards = (make_card 1 1) :: (make_card 1 2) :: (make_card 9 1) :: [] in
+  let player = { hand = cards } in
   [
-    eq_test "Player.points" (points hand) 21;
-    eq_test "Player.points 2" (points ((make_card 1 3) :: hand)) 12;
+    eq_test "Player.points" (points player) 21;
+    eq_test "Player.points 2" (points { hand = (make_card 1 3) :: hand player})
+      12;
     eq_test "Player.points bust" 
-      (points ((make_card 1 1) :: (make_card 12 1) :: hand )) 22;
+      (points { hand = (make_card 1 1) :: (make_card 12 1) :: hand player }) 22;
   ]
 
 let state_tests = []
