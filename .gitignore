@@ -2,3 +2,5 @@
 _build/
 *.swp
 *.byte
+main.byte
+main.byte@
