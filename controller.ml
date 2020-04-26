@@ -1,5 +1,5 @@
-open State
 open Player
+open State
 
 type pts = int
 type condition = Bust | Natural | Int of pts
@@ -7,7 +7,7 @@ type win_condition = Win | Draw | Loss | Stop of pts | Next of pts
 type win = win_condition * win_condition
 
 let get_player_condition player =
-  let hand = hand player in
+  (* let hand = hand player in *)
   match points player with
   | 21 -> Natural
   | n when n > 21 -> Bust

@@ -1,7 +1,6 @@
 open Card
 open Deck
 open Player
-open Controller
 
 
 type t = {deck: deck; dealer: player; player: player}
@@ -16,8 +15,8 @@ let init_state =
 let step s = 
   let d = s.deck in
   let r = draw_card d in
-  { deck = (deck r); dealer = { hand = s.dealer }; 
-    player = { hand = cards r } }; 
+  { deck = (deck r); dealer = { hand = hand s.dealer }; 
+    player = { hand = cards r } }
 
 let dealer s =
   s.dealer
