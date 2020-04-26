@@ -2,6 +2,8 @@
 type deck
 type res
 
+val cards : res -> Card.card list
+
 val shuffle_deck : deck
 
 val draw_two_cards : deck -> res

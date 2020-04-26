@@ -1,5 +1,12 @@
-type player = { hand : string list }
+(** Abstract value type of player *)
+type player = { hand: Card.card list }
 
-val points : Card.card list -> int
+(** [points p] gets the point value of [p] *)
+val points : player -> int
 
-val hand : player -> string list
+(** [hand p] gets the hand of [p] *)
+val hand : player -> Card.card list
+
+(** [hand_as_string h] represents [h] as a list of strings *)
+val hand_as_string : player -> string list
+
