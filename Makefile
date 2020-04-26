@@ -30,7 +30,7 @@ bisect: clean test
 	bisect-ppx-report -I _build -html report bisect0001.out
 
 zip:
-	zip search_src.zip *.ml* _tags Makefile  
+	zip src.zip *.ml* _tags Makefile  
 
 docs: docs-public docs-private
 
