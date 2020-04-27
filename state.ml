@@ -23,15 +23,15 @@ let step s cmd =
   match d_points with
   | n when n < 17 ->
     if cmd = Hit then
-    { deck = (deck r'); dealer = { hand = cards r }; 
-      player = { hand = cards r' } }
+    { deck = (deck r'); dealer = { hand = (cards r) @ (hand s.dealer) }; 
+      player = { hand = (cards r') @ (hand s.player) } }
     else
-    { deck = (deck r); dealer = { hand = cards r }; 
+    { deck = (deck r); dealer = { hand = (cards r) @ (hand s.dealer) }; 
       player = { hand = hand s.player} }
   | _ ->
     if cmd = Hit then
     { deck = (deck r); dealer = { hand = hand s.dealer}; 
-      player = { hand = cards r} }
+      player = { hand = (cards r) @ (hand s.player)} }
     else
       s
 

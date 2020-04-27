@@ -11,29 +11,35 @@ let quit () =
 let format_pts (pts: int) : string =
   "(" ^ (string_of_int pts) ^ " pts)"
 
-let print_init_st () =
-  let st = init_state in
+let print_st (initial_run:bool) st =
   let player = player st in
   let dealer = dealer st in
   let player_hand = hand player in
   let player_hand_str = {hand = player_hand }|> hand_as_string 
     |>  String.concat ", " in
   let dealer_hand = hand dealer in
-  let dealer_hand_str = {hand = dealer_hand }|> hand_as_string |> List.hd in
+  let dealer_hand_str =
+    begin
+      if initial_run = true then
+        ({hand = dealer_hand }|> hand_as_string |> List.hd) ^ ", and another 
+          face down."
+      else
+        {hand = dealer_hand }|> hand_as_string |> String.concat ", "
+    end
+  in
   let player_msg = "Your hand: " ^ player_hand_str in
-  let dealer_msg = "Dealer's hand: " ^ dealer_hand_str
-    ^ ", and another facedown" in
+  let dealer_msg = "Dealer's hand: " ^ dealer_hand_str in
   print_endline (player_msg ^ " " ^ (format_pts (points player)));
-  print_endline dealer_msg;
-  st
+  print_endline dealer_msg
 
 let game_msg () =
   print_endline "[stand]/[hit]/[quit]?";
   print_string "> ";
   read_line ()
 
-let rec game_loop st =
-  let status = check_st st in
+let rec game_loop initial_run st =
+  if initial_run = true then () else print_st false st;
+  let status = check_st initial_run st in
   match status with
   | (Win, _) -> print_endline "You won!"; ()
   | (Draw, _) -> print_endline "You tied!"; ()
@@ -42,15 +48,16 @@ let rec game_loop st =
       begin
         match Parser.parse (game_msg ())  with
         | Quit -> quit ()
-        | Hit -> let st' = step st Hit in game_loop st'
-        | Stand -> let st' = step st Stand in game_loop st'
+        | Hit -> let st' = step st Hit in game_loop false st'
+        | Stand -> let st' = step st Stand in game_loop false st'
         | Unknown -> print_endline "unknown command"; quit ()
       end
   | _ -> failwith "an unexpected error occured"
 
 let play_game () = 
-  let st = print_init_st () in
-  game_loop st
+  let st = init_state in
+  print_st true st;
+  game_loop true st
 
 let main () = 
   print_endline "Welcome to blackjack! Get closer to 21 than the dealer without

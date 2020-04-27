@@ -14,7 +14,7 @@ let get_player_condition player =
   | n -> Int n
 
 (** [check_st s] checks if either the player or dealer has one yet. **)
-let check_st st =
+let check_st initial_run st =
   let player = player st in
   let dealer = dealer st in
   let p_cond = get_player_condition player in
@@ -28,13 +28,15 @@ let check_st st =
         | _ -> (Win, Loss)
       end
   | Int x ->
-      begin match d_cond with
-      | Natural -> (Loss, Win)
-      | Bust -> (Win, Loss)
-      | Int y ->
-        if y >= 17 then
-          begin
-            if x > y then (Win, Loss) else (Loss, Win)
-          end
-        else (Next, Next)
-      end
+      if initial_run = false then
+        begin match d_cond with
+        | Natural -> (Loss, Win)
+        | Bust -> (Win, Loss)
+        | Int y ->
+          if y >= 17 then
+            begin
+              if x > y then (Win, Loss) else (Loss, Win)
+            end
+          else (Next, Next)
+        end
+      else (Next, Next)
