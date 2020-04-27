@@ -2,6 +2,7 @@ open State
 open Printf
 open Player
 open Controller
+open Parser
 
 let quit () =
   print_endline "Exited the game.";
@@ -26,30 +27,34 @@ let print_init_st =
   print_endline dealer_msg;
   st
 
-let print_check =
+let parse =
   print_endline "[stand]/[hit]/[quit]?";
   print_string "> ";
-  read_line ()
+  parse (read_line ())
 
-let rec play_game st () = 
-  print_endline "Now playing.";
-  let condition = check_st st in
-  match condition with
-  | (Win, _) -> print_endline "You won."; play_game print_init_st ()
-  | (Loss, _) -> print_endline "You lost."; play_game print_init_st ()
-  | (Draw, _) -> 
+let rec game_loop st =
+  print_endline "Working";
+  let status = check_st st in
+  match status with
+  | (Win, _) -> print_endline "You won!"; ()
+  | (Draw, _) -> print_endline "You tied!"; ()
+  | (Loss, _) -> print_endline "You lost!"; ()
+  | (Next, Next) ->
       begin
-        print_endline "Draw! No loss or gain."; 
-        play_game print_init_st ()
+        match parse with
+        | Quit -> quit ()
+        | Hit -> let st' = step st Hit in game_loop st'
+        | Stand -> let st' = step st Stand in game_loop st'
+        | Unknown -> print_endline "unknown command"; quit ()
       end
-  | (Next x, Stop y) -> let r = parse print_check in play_game (step_st st r) ()
-  | (Next x, Next y) -> let r = parse print_check in play_game (step_st st r) ()
-  | _ -> print_endline "You lost."; play_game print_init_st ()
+  | _ -> failwith "an unexpected error occured"
+
+let play_game st = 
+  let st = init_state in
+  print_endline "New round.";
+  game_loop st
 
 let main () = 
   print_endline "Welcome to blackjack! Get closer to 21 than the dealer without
     busting!";
-  let st = init_state in
-  play_game st ()
-
-let () = main ()
+  play_game

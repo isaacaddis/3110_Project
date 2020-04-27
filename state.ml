@@ -1,9 +1,11 @@
 open Card
 open Deck
 open Player
+open Parser
 
 
 type t = {deck: deck; dealer: player; player: player}
+type users = Player | Dealer
 
 let init_state =
   let d = shuffle_deck in
@@ -12,11 +14,28 @@ let init_state =
   { deck = (deck d''); dealer = { hand = cards d' }; 
     player = { hand = cards d'' } }
 
-let step s = 
+let step s cmd = 
+  let player = s.player in
+  let dealer = s.dealer in
+  let d_points = points dealer in
   let d = s.deck in
   let r = draw_card d in
-  { deck = (deck r); dealer = { hand = hand s.dealer }; 
-    player = { hand = cards r } }
+  let r' = draw_card (deck r) in
+  match d_points with
+  | n when n < 17 ->
+    if cmd = Hit then
+    { deck = (deck r'); dealer = { hand = cards r }; 
+      player = { hand = cards r' } }
+    else
+    { deck = (deck r); dealer = { hand = cards r }; 
+      player = { hand = hand s.player} }
+  | _ ->
+    if cmd = Hit then
+    { deck = (deck r); dealer = { hand = hand s.dealer}; 
+      player = { hand = cards r} }
+    else
+      s
+
 
 let dealer s =
   s.dealer
