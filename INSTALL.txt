@@ -1,0 +1,6 @@
+To run the program, you must first run [make build], to create the
+[_build] directory.
+
+After running [make build], you can run [make test] to test the cases we have
+created for the projected in [test.ml], and you can run [make play] to test
+the functionality of the Blackjack game we have created so far.
