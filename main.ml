@@ -39,7 +39,7 @@ let game_msg () =
 
 let rec game_loop initial_run st =
   if initial_run = true then () else print_st false st;
-  let status = check_st st in
+  let status = check_st initial_run st in
   match status with
   | (Win, _) -> print_endline "You won!"; ()
   | (Draw, _) -> print_endline "You tied!"; ()
