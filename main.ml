@@ -11,7 +11,7 @@ let quit () =
 let format_pts (pts: int) : string =
   "(" ^ (string_of_int pts) ^ " pts)"
 
-let print_init_st =
+let print_init_st () =
   let st = init_state in
   let player = player st in
   let dealer = dealer st in
@@ -27,7 +27,7 @@ let print_init_st =
   print_endline dealer_msg;
   st
 
-let game_msg =
+let game_msg () =
   print_endline "[stand]/[hit]/[quit]?";
   print_string "> ";
   read_line ()
@@ -40,7 +40,7 @@ let rec game_loop st =
   | (Loss, _) -> print_endline "You lost!"; ()
   | (Next, Next) ->
       begin
-        match Parser.parse (game_msg)  with
+        match Parser.parse (game_msg ())  with
         | Quit -> quit ()
         | Hit -> let st' = step st Hit in game_loop st'
         | Stand -> let st' = step st Stand in game_loop st'
@@ -48,14 +48,13 @@ let rec game_loop st =
       end
   | _ -> failwith "an unexpected error occured"
 
-let play_game = 
-  let st = init_state in
-  print_endline "New round.";
+let play_game () = 
+  let st = print_init_st () in
   game_loop st
 
 let main () = 
   print_endline "Welcome to blackjack! Get closer to 21 than the dealer without
     busting!";
-  play_game
+  play_game ()
 
 let () = main ()

@@ -15,7 +15,6 @@ let init_state =
     player = { hand = cards d'' } }
 
 let step s cmd = 
-  let player = s.player in
   let dealer = s.dealer in
   let d_points = points dealer in
   let d = s.deck in

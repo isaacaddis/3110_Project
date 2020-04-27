@@ -31,5 +31,10 @@ let check_st st =
       begin match d_cond with
       | Natural -> (Loss, Win)
       | Bust -> (Win, Loss)
-      | _ -> (Next, Next)
+      | Int y ->
+        if y >= 17 then
+          begin
+            if x > y then (Win, Loss) else (Loss, Win)
+          end
+        else (Next, Next)
       end
