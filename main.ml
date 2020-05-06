@@ -37,13 +37,15 @@ let game_msg () =
   print_string "> ";
   read_line ()
 
+(** Returns: point multipler (0., 1.5, -1, 1) *)
 let rec game_loop initial_run st =
   if initial_run = true then () else print_st false st;
   let status = check_st initial_run st in
   match status with
-  | (Win, _) -> print_endline "You won!"; ()
-  | (Draw, _) -> print_endline "You tied!"; ()
-  | (Loss, _) -> print_endline "You lost!"; ()
+  | (Blackjack, _) -> print_endline "You won!"; Blackjack
+  | (Win, _) -> print_endline "You won!"; Win
+  | (Draw, _) -> print_endline "You tied!"; Draw
+  | (Loss, _) -> print_endline "You lost!"; Loss
   | (Next, Next) ->
       begin
         match Parser.parse (game_msg ())  with
@@ -54,14 +56,21 @@ let rec game_loop initial_run st =
       end
   | _ -> failwith "an unexpected error occured"
 
-let play_game () = 
+let play_game (bet: int) () = 
   let st = init_state in
   print_st true st;
-  game_loop true st
+  let bet = float_of_int bet in
+  match game_loop true st with
+  | Blackjack -> 1.5 *. bet
+  | Win -> bet
+  | Draw -> 0.
+  | Loss -> -1. *. bet
+  | _ -> failwith "an error occured"
 
 let main () = 
   print_endline "Welcome to blackjack! Get closer to 21 than the dealer without
-    busting!";
-  play_game ()
+    busting! Enter bet amount: ";
+  let pts = play_game (read_line () |> int_of_string) () |> string_of_float in
+  print_endline ("You won/lost " ^ pts ^ " dollars.")
 
 let () = main ()
