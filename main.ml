@@ -14,17 +14,14 @@ let format_pts (pts: int) : string =
 let print_st (initial_run:bool) st =
   let player = player st in
   let dealer = dealer st in
-  let player_hand = hand player in
-  let player_hand_str = {hand = player_hand }|> hand_as_string 
-                        |>  String.concat ", " in
-  let dealer_hand = hand dealer in
+  let player_hand_str = player |> hand_as_string |> String.concat ", " in
   let dealer_hand_str =
     begin
       if initial_run = true then
-        ({hand = dealer_hand }|> hand_as_string |> List.hd) ^ ", and another 
+        (dealer |> hand_as_string |> List.hd) ^ ", and another 
           face down."
       else
-        {hand = dealer_hand }|> hand_as_string |> String.concat ", "
+        dealer |> hand_as_string |> String.concat ", "
     end
   in
   let player_msg = "Your hand: " ^ player_hand_str in
@@ -74,7 +71,7 @@ let play_game (bet: int) () =
 
 let main () = 
   print_endline "Welcome to blackjack! Get closer to 21 than the dealer without
-    busting! Enter bet amount: ";
+    busting! Enter bet amount in dollars: ";
   let pts = play_game (read_line () |> int_of_string) () |> string_of_float in
   print_endline ("You won/lost " ^ pts ^ " dollars.")
 

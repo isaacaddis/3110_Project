@@ -1,8 +1,10 @@
-(** Abstract type representing a deck **)
+(** Abstract type representing a deck. **)
 type deck
+
+(** Abstract type representing cards drawn from deck. *)
 type res
 
-val cards : res -> Card.card list
+val cards : res -> Card.t list
 
 val shuffle_deck : deck
 

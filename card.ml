@@ -1,9 +1,9 @@
 type face_value = int
 type suit = Diamonds | Spades | Hearts | Clubs
-type card' = Jack | Queen | King | Ace | Int of face_value
-type card = (int * card' * suit)
+type card = Jack | Queen | King | Ace | Int of face_value
+type t = (int * card * suit)
 
-let get_val (c: card) : int = 
+let get_val (c: t) : int = 
   match c with
   | (i, _, _) -> i
 
@@ -14,8 +14,8 @@ let suit_to_string s =
   | Hearts -> "Hearts"
   | Clubs -> "Clubs"
 
-let card_to_string (card': card') : string =
-  match card' with
+let card_to_string (card: card) : string =
+  match card with
   | Jack  -> "J"
   | Queen -> "Q"
   | King -> "K"

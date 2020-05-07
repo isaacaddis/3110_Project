@@ -1,12 +1,18 @@
 (** Abstract value type of player *)
-type player = { hand: Card.card list }
+type t
 
-(** [points p] gets the point value of [p] *)
-val points : player -> int
+(** [make_player h m] instantiates player with hand [h] and money [m]. *)
+val make_player : Card.t list -> int -> t
+
+(** [points p] gets the point value of the hand of [p]. *)
+val points : t -> int
+
+(** [money p] gets the money of [p] *)
+val money : t -> int
 
 (** [hand p] gets the hand of [p] *)
-val hand : player -> Card.card list
+val hand : t -> Card.t list
 
-(** [hand_as_string h] represents [h] as a list of strings *)
-val hand_as_string : player -> string list
+(** [hand_as_string p] represents the hand of [p] as a list of strings *)
+val hand_as_string : t -> string list
 
