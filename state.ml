@@ -30,7 +30,7 @@ let step s cmd =
       player = make_player (cards r @ hand s.player) (money s.player) } in
     begin match points s'.player with
       | 21 -> dealer_draw s'
-      | _ -> s' 
+      | _ -> s'
     end
   | Stand -> dealer_draw s
   | Double -> 

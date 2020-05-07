@@ -12,7 +12,7 @@ let get_player_condition player =
   | n when n > 21 -> Bust
   | n -> Int n
 
-(** [check_st s] checks if either the player or dealer has one yet. **)
+(** [check_st s] checks if either the player or dealer has won yet. **)
 let check_st initial_run st =
   let player = player st in
   let dealer = dealer st in
