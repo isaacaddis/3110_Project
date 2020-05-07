@@ -50,4 +50,11 @@ let check_st p_turn st =
             end
           else (Next, Next)
       end
+    else if d_cond = Natural then
+      (print_endline ""; print_endline "Dealer has a blackjack!";
+      print_string "Your hand: ";
+      print_endline (player |> hand_as_string |> String.concat ", ");
+      print_string "Dealer's hand: ";
+      print_endline (dealer |> hand_as_string |> String.concat ", ");
+      (Loss, Win))
     else (Next, Next)

@@ -22,8 +22,7 @@ let print_st (p_turn:bool) st =
   let dealer_hand_str =
     begin
       if p_turn then
-        (dealer |> hand_as_string |> List.hd) ^ ", and another 
-          face down."
+        (dealer |> hand_as_string |> List.hd) ^ ", and another face down."
       else
         dealer |> hand_as_string |> String.concat ", "
     end
