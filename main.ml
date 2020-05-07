@@ -16,7 +16,7 @@ let print_st (initial_run:bool) st =
   let dealer = dealer st in
   let player_hand = hand player in
   let player_hand_str = {hand = player_hand }|> hand_as_string 
-    |>  String.concat ", " in
+                        |>  String.concat ", " in
   let dealer_hand = hand dealer in
   let dealer_hand_str =
     begin
@@ -32,8 +32,12 @@ let print_st (initial_run:bool) st =
   print_endline (player_msg ^ " " ^ (format_pts (points player)));
   print_endline dealer_msg
 
-let game_msg () =
-  print_endline "[stand]/[hit]/[quit]?";
+let game_msg (s : State.t) () =
+  begin match s |> player |> points with
+    | 9 | 10 | 11 when s |> player |> hand |> List.length = 2
+      -> print_endline "[stand]/[hit]/[double down]/[quit]?" 
+    | _ -> print_endline "[stand]/[hit]/[quit]?"
+  end;
   print_string "> ";
   read_line ()
 
@@ -47,13 +51,14 @@ let rec game_loop initial_run st =
   | (Draw, _) -> print_endline "You tied!"; Draw
   | (Loss, _) -> print_endline "You lost!"; Loss
   | (Next, Next) ->
-      begin
-        match Parser.parse (game_msg ())  with
-        | Quit -> quit ()
-        | Hit -> let st' = step st Hit in game_loop false st'
-        | Stand -> let st' = step st Stand in game_loop false st'
-        | Unknown -> print_endline "unknown command"; quit ()
-      end
+    begin
+      match Parser.parse (game_msg st ())  with
+      | Quit -> quit ()
+      | Hit -> let st' = step st Hit in game_loop false st'
+      | Stand -> let st' = step st Stand in game_loop false st'
+      | Double -> let st' = step st Double in game_loop false st'
+      | Unknown -> print_endline "unknown command"; quit ()
+    end
   | _ -> failwith "an unexpected error occured"
 
 let play_game (bet: int) () = 
