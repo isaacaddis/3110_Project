@@ -18,13 +18,13 @@ let format_pts (pts: int) : string =
 let print_st (p_turn:bool) st =
   let player = player st in
   let dealer = dealer st in
-  let player_hand_str = player |> hand_as_string |> String.concat ", " in
+  let player_hand_str = hand_as_string player in
   let dealer_hand_str =
     begin
       if p_turn then
-        (dealer |> hand_as_string |> List.hd) ^ ", and another face down."
+        (top_card dealer) ^ ", and another face down."
       else
-        dealer |> hand_as_string |> String.concat ", "
+        hand_as_string dealer
     end
   in
   let player_msg = "Your hand: " ^ player_hand_str in

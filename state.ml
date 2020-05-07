@@ -26,8 +26,10 @@ let step s cmd =
   let r = draw_card d in
   match cmd with
   | Hit ->
-    { deck = (deck r); dealer = s.dealer; 
-      player = make_player (cards r @ hand s.player) (money s.player) }
+    let new_s = { deck = (deck r); dealer = s.dealer; 
+      player = make_player (cards r @ hand s.player) (money s.player) } in
+    if points new_s.player = 21 then dealer_draw new_s
+    else new_s
   | Stand -> dealer_draw s
   | Double -> 
     dealer_draw { deck = (deck r); dealer = s.dealer; 

@@ -26,12 +26,20 @@ let money p =
   p.money
 
 let hand p =
-  p.hand 
+  p.hand
+
+let top_card p =
+  let hand = hand p in
+  match hand with
+  | h::t -> to_string h
+  | _ -> failwith "Tried to get top card of player with empty hand"
 
 let hand_as_string p =
   let hand = hand p in
   let rec as_string_list = function
     | [] -> []
     | x :: xs -> (to_string x) :: (as_string_list xs)
-  in as_string_list hand
+  in 
+  let lst = as_string_list hand in
+  String.concat ", " lst
 
