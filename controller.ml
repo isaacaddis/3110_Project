@@ -50,5 +50,4 @@ let check_st p_turn st =
             end
           else (Next, Next)
       end
-    else if d_cond = Natural then (Loss, Win)
     else (Next, Next)
