@@ -1,4 +1,4 @@
-(** Abstract value type of player *)
+(** Abstract value type of player. *)
 type t
 
 (** [make_player h m] instantiates player with hand [h] and money [m]. *)

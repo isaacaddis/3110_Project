@@ -4,7 +4,6 @@ open Player
 open Parser
 
 type t = {deck: deck; dealer: Player.t; player: Player.t}
-type users = Player | Dealer
 
 let init_state = 
   let d = shuffle_deck in
