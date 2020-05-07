@@ -61,7 +61,8 @@ let rec game_loop initial_run st =
       | Stand -> let st' = step st Stand in game_loop false st'
       | Double -> let st' = step st Double in game_loop false st'
       | Unknown -> 
-        print_endline "Unknown command. Please select a command from the options above.";
+        print_endline ("Unknown command. Please select a command from the " ^
+         "options above.");
         game_loop initial_run st
     end
   | _ -> failwith "an unexpected error occured"
@@ -92,7 +93,8 @@ let print_result pts =
 let rec read_bet inp =
   try int_of_string inp
   with (Failure e) ->
-    print_endline "I could not understand that input. Please input an integer number of dollars to bet.";
+    print_endline ("I could not understand that input. Please input an " ^
+      "integer number of dollars to bet.");
     print_string "$";
     read_bet (read_line ())
 
