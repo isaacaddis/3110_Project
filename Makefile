@@ -1,11 +1,12 @@
-MODULES=card deck player state main
+MODULES=card deck player state main serve
 OBJECTS=$(MODULES:=.cmo)
 MLS=$(MODULES:=.ml)
 MLIS=$(MODULES:=.mli)
 TEST=test.byte
 MAIN=main.byte
-OCAMLBUILD=ocamlbuild -use-ocamlfind 
-PKGS=unix,oUnit,str,ANSITerminal
+SERVER=serve.byte
+OCAMLBUILD=corebuild -cflag -thread -use-ocamlfind -pkg cohttp-lwt-unix
+PKGS=unix,oUnit,str,ANSITerminal,cohttp-lwt-unix,lwt,Cohttp
 
 default: build
 	utop
@@ -15,6 +16,9 @@ build:
 
 play:
 	$(OCAMLBUILD) $(MAIN) && ./$(MAIN)
+
+server:
+	$(OCAMLBUILD) $(SERVER) && ./$(SERVER)
 
 test:
 	BISECT_COVERAGE=YES $(OCAMLBUILD) -tag 'debug' $(TEST) && ./$(TEST) -runner sequential
