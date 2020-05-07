@@ -20,15 +20,22 @@ let check_st initial_run st =
   let d_cond = get_player_condition dealer in
   match p_cond with
   | Bust -> (Loss, Win)
-  | Natural ->
-      begin
-        match d_cond with
-        | Natural -> (Draw, Draw)
-        | _ -> (Blackjack, Loss)
-      end
+  | Natural when initial_run = true ->
+    begin
+      match d_cond with
+      | Natural -> (Draw, Draw)
+      | _ -> (Blackjack, Loss)
+    end
+  | Natural -> begin
+      match d_cond with
+      | Natural -> (Draw, Draw)
+      | Int y when y >= 17 -> (Win, Loss)
+      | Bust -> (Win, Loss)
+      | Int y -> (Next, Next)
+    end
   | Int x ->
-      if initial_run = false then
-        begin match d_cond with
+    if initial_run = false then
+      begin match d_cond with
         | Natural -> (Loss, Win)
         | Bust -> (Win, Loss)
         | Int y ->
@@ -37,5 +44,6 @@ let check_st initial_run st =
               if x > y then (Win, Loss) else (Loss, Win)
             end
           else (Next, Next)
-        end
-      else (Next, Next)
+      end
+    else if d_cond = Natural then (Loss, Win)
+    else (Next, Next)
