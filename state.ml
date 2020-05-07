@@ -26,12 +26,8 @@ let step s cmd =
   let r = draw_card d in
   match cmd with
   | Hit ->
-    let s' = { deck = (deck r); dealer = s.dealer; 
-      player = make_player (cards r @ hand s.player) (money s.player) } in
-    begin match points s'.player with
-      | 21 -> dealer_draw s'
-      | _ -> s'
-    end
+    { deck = (deck r); dealer = s.dealer; 
+      player = make_player (cards r @ hand s.player) (money s.player) }
   | Stand -> dealer_draw s
   | Double -> 
     dealer_draw { deck = (deck r); dealer = s.dealer; 

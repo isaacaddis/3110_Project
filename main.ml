@@ -13,15 +13,15 @@ let quit () =
 let format_pts (pts: int) : string =
   "(" ^ (string_of_int pts) ^ " pts)"
 
-(** [print_st i st] prints the state, and changes depending on if [st] is the
+(** [print_st b st] prints the state, and changes depending on if [st] is the
     players turn or the dealers turn with bool [b]. *)
-let print_st (initial_run:bool) st =
+let print_st (p_turn:bool) st =
   let player = player st in
   let dealer = dealer st in
   let player_hand_str = player |> hand_as_string |> String.concat ", " in
   let dealer_hand_str =
     begin
-      if initial_run = true then
+      if p_turn then
         (dealer |> hand_as_string |> List.hd) ^ ", and another 
           face down."
       else
@@ -45,9 +45,10 @@ let game_msg (s : State.t) () =
   read_line ()
 
 (** Returns: point multipler (0., 1.5, -1, 1) *)
-let rec game_loop initial_run st =
-  if initial_run = true then () else print_st false st;
-  let status = check_st initial_run st in
+let rec game_loop p_turn st =
+  print_endline "";
+  print_st p_turn st;
+  let status = check_st p_turn st in
   match status with
   | (Blackjack, _) -> print_endline "You won!"; Blackjack
   | (Win, _) -> print_endline "You won!"; Win
@@ -57,20 +58,19 @@ let rec game_loop initial_run st =
     begin
       match Parser.parse (game_msg st ())  with
       | Quit -> quit ()
-      | Hit -> let st' = step st Hit in game_loop false st'
+      | Hit -> let st' = step st Hit in game_loop true st'
       | Stand -> let st' = step st Stand in game_loop false st'
       | Double -> let st' = step st Double in game_loop false st'
       | Unknown -> 
         print_endline ("Unknown command. Please select a command from the " ^
          "options above.");
-        game_loop initial_run st
+        game_loop p_turn st
     end
   | _ -> failwith "an unexpected error occured"
 
 (** [play_game b] runs the Blackjack game with a bet [b]. *)
 let play_game (bet: int) () = 
   let st = init_state in
-  print_st true st;
   let bet = float_of_int bet in
   match game_loop true st with
   | Blackjack -> 1.5 *. bet
@@ -83,7 +83,7 @@ let play_game (bet: int) () =
     gained or lost. *)
 let print_result pts =
   let p = int_of_float pts in
-  if p = 0 then print_endline "You tied."
+  if p = 0 then print_endline "You did not win or lose any money."
   else if p < 0 then 
     print_endline ("You lost " ^ string_of_int (-p) ^ " dollars.")
   else print_endline ("You won " ^ string_of_int p ^ " dollars.")
