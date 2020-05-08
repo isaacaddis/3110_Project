@@ -14,4 +14,4 @@ let server =
   in
   Server.create ~mode:(`TCP (`Port 3000)) (Server.make ~callback ())
 
-let () = (Lwt_main.run server)
+let () = Lwt_main.run server
