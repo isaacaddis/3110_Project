@@ -16,6 +16,11 @@ let construct_login_json name bet =
   "\", \"bet\" : " ^ 
   (string_of_int bet) ^ " }"
 
+let construct_play_json (session_id: string) =
+  "{ \"session_id\" : \"" ^
+  session_id ^ 
+  "\" }"
+
 let login name bet =
   Client.post ~body:(Cohttp_lwt.Body.of_string (construct_login_json name bet))
     (Uri.of_string "http://localhost:8000/login") >>= fun (resp, body) ->
@@ -25,7 +30,8 @@ let login name bet =
   body
 
 let play session_id =
-  Client.post ~body:(Cohttp_lwt.Body.of_string session_id) 
+  Client.post 
+    ~body:(Cohttp_lwt.Body.of_string (construct_play_json (session_id)) )
     (Uri.of_string "http://localhost:8000/play") >>= fun (resp, body) ->
   let code = resp |> Response.status |> Code.code_of_status in
   Printf.printf "Response code (play): %d\n" code;
@@ -57,4 +63,4 @@ let () =
     end
   in
   print_endline ("Joined with session ID: " ^ session_id');
-  main !(state_ref.session_id) () 
+  main (session_id') () 
