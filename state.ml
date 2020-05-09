@@ -13,6 +13,12 @@ let init_state money=
   { deck = (deck d''); dealer = (make_player (cards d') 50000); player = 
     (make_player (cards d'') money) }
 
+(** [pm s] is the player's money in state [s]*)
+let pm s = s.player |> money
+
+(** [dm s] is the dealer's money in state [s]. *)
+let dm s = s.dealer |> money
+
 (** [dealer_draw s] is the state [s] becomes after the dealer draws cards. *)
 let rec dealer_draw s = 
   let d = s.deck in
@@ -20,7 +26,8 @@ let rec dealer_draw s =
   if d_points >= 17 then s else
     let r = draw_card d in
     dealer_draw {deck = (deck r); 
-      dealer = (make_player (cards r @ hand s.dealer) 50000); player = s.player}
+      dealer = (make_player (cards r @ hand s.dealer) (dm s));
+      player = s.player}
 
 let step s cmd = 
   let d = s.deck in
@@ -46,12 +53,6 @@ let x1_5 num = (1.5 *. float_of_int num) |> int_of_float
   { deck = s.deck;
     dealer = s.dealer;
     player = make_player (s.player |> hand) m }*)
-
-(** [pm s] is the player's money in state [s]*)
-let pm s = s.player |> money
-
-(** [dm s] is the dealer's money in state [s]. *)
-let dm s = s.dealer |> money
 
 (** [update_money m] updates the stats.json file with new money value [m]. *)
 let update_money money =

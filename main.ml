@@ -55,7 +55,19 @@ let game_msg (s : State.t) () =
   print_string "> ";
   read_line ()
 
-(** Returns: point multipler (0., 1.5, -1, 1) *)
+(** [game_double s] plays out game with state [s] after doubling down. *)
+let game_double st =
+  print_endline "";
+  print_st false st;
+  let status = check_st_d st in
+  match status with
+  | (DWin, _) -> print_endline "You won double!\n"; DWin
+  | (DLoss, _) -> print_endline "You lost double!\n"; DLoss
+  | (Draw, _) -> print_endline "You tied!\n"; Draw
+  | _ -> failwith "game_double should only be called after double down."
+
+(** [game_loop p s] loops the game with state [s] and boolean for player
+    turn [p]. *)
 let rec game_loop p_turn st =
   print_endline "";
   print_st p_turn st;
@@ -71,7 +83,7 @@ let rec game_loop p_turn st =
       | Quit -> quit ()
       | Hit -> let st' = step st Hit in game_loop true st'
       | Stand -> let st' = step st Stand in game_loop false st'
-      | Double -> let st' = step st Double in game_loop false st'
+      | Double -> let st' = step st Double in game_double st'
       | Unknown -> 
         print_endline ("Unknown command. Please select a command from the " ^
                        "options above.");
