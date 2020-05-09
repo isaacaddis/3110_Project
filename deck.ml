@@ -49,3 +49,7 @@ let draw_two_cards d =
   match d with
   | x :: y :: xs -> { cards = x :: y :: []; deck = xs }
   | _ -> failwith "there are no more cards to deal"
+
+let rec test_deck c = match c with
+  | [] -> []
+  | (a, b) :: t -> make_card a b :: test_deck t
