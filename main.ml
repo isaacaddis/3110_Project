@@ -32,16 +32,15 @@ let print_st (p_turn:bool) st =
   let dealer = dealer st in
   let player_hand_str = hand_as_string player in
   let dealer_hand_str =
-    begin
-      if p_turn then
-        (top_card dealer) ^ ", and another face down."
-      else
-        hand_as_string dealer
-    end
+    if p_turn then
+      hand_as_facedown_string dealer
+    else
+      hand_as_string dealer
   in
-  let player_msg = "Your hand: " ^ player_hand_str in
-  let dealer_msg = "Dealer's hand: " ^ dealer_hand_str in
-  print_endline (player_msg ^ " " ^ (format_pts (points player)));
+  let player_msg = "Your hand:" ^ format_pts (points player) ^ "\n" ^
+    player_hand_str in
+  let dealer_msg = "Dealer's hand:\n" ^ dealer_hand_str in
+  print_endline player_msg;
   print_endline dealer_msg
 
 (** [game_msg s] prints the game message for state [s] and returns

@@ -34,12 +34,16 @@ let top_card p =
   | h::t -> to_string h
   | _ -> failwith "Tried to get top card of player with empty hand"
 
+let hand_as_facedown_string p =
+  card_facedown_to_ascii_string (hand p)
+
 let hand_as_string p =
   let hand = hand p in
-  let rec as_string_list = function
+  (* let rec as_string_list = function
     | [] -> []
     | x :: xs -> (to_string x) :: (as_string_list xs)
   in 
   let lst = as_string_list hand in
-  String.concat ", " lst
+  String.concat ", " lst *)
+  cards_to_ascii_string hand
 
