@@ -13,6 +13,9 @@ open State
 
 let eq_test name a b = (name >:: fun _ -> assert_equal a b)
 
+(** [ex_test name func a b] is a test that checks that [func b] raises [a]*)
+let ex_test name func a b = (name >:: fun _ -> assert_raises a (fun () -> func b))
+
 let card_tests = [
   eq_test "to_string jack" (make_card 10 1 |> to_string) "J of Diamonds";
   eq_test "to_string ace" (make_card 1 3 |> to_string) "A of Hearts";
@@ -23,14 +26,19 @@ let card_tests = [
 ]
 
 let deck_tests = 
-  let shuffled = shuffle_deck () in
-  let drew_two = draw_two_cards shuffled in
-  let remaining_cards = deck drew_two in
-  let cards_drawn = cards drew_two in
-[
-  (** Make test cases for these, or maybe combine this stuff with other stuff
-      for test cases. *)
-]
+  let ace_spade = test_deck [(1, 2)] in
+  let two_cards = test_deck [(1, 2); (12, 1)] in
+  let hand1 = draw_card ace_spade in
+  let hand2 = draw_two_cards two_cards in
+  [
+    ex_test "can't draw from empty deck" 
+      draw_card (Failure "there are no more cards to deal") (deck hand1);
+    ex_test "can't draw two from one card deck"
+      draw_two_cards (Failure "there are no more cards to deal") ace_spade;
+    eq_test "proper hand string" (cards_to_string hand1) ["A of Spades"];
+    eq_test "two hand string" (cards_to_string hand2) 
+      ["K of Diamonds"; "A of Spades"]
+  ]
 
 let player_tests = 
   let cards = (make_card 1 1) :: (make_card 1 2) :: (make_card 9 1) :: [] in
@@ -108,10 +116,10 @@ let state_tests =
     eq_test "Dealer who tied with bet $500 gains nothing, has $50000"
       (money (dealer draw2)) 50000;
     eq_test ("Test continuity, player wins blackjack with bet $500 gains " ^ 
-      "$750 again, has $2000") (money (player blackjack3)) 2000;
+             "$750 again, has $2000") (money (player blackjack3)) 2000;
     eq_test ("Test continuity, dealer loses blackjack with bet $500 loses " ^ 
-      "$750 again, has $48500") (money (dealer blackjack3)) 48500;
-]
+             "$750 again, has $48500") (money (dealer blackjack3)) 48500;
+  ]
 
 let suite =  
   "test suite for blackjack" >::: List.flatten [
