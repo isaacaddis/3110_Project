@@ -2,8 +2,8 @@ open Lwt
 open Cohttp
 open Cohttp_lwt_unix
 
-let body =
-  Client.get (Uri.of_string "http://localhost:8000") >>= fun (resp, body) ->
+let body name =
+  Client.post ~body:(Cohttp_lwt.Body.of_string name) (Uri.of_string "http://localhost:8000") >>= fun (resp, body) ->
   let code = resp |> Response.status |> Code.code_of_status in
   Printf.printf "Response code: %d\n" code;
   Printf.printf "Headers: %s\n" (resp |> Response.headers |> Header.to_string);
@@ -12,8 +12,11 @@ let body =
   body
 
 let () =
-  let body = Lwt_main.run body in
-  print_endline ("Received body\n" ^ body)
+  print_endline "Welcome to blackjack. There's an open seat on the table";
+  print_endline "Your name is: ";
+  let name = read_line () in 
+  let body' = Lwt_main.run (body name) in
+  print_endline ("Received body\n" ^ body')
 (**
 (** [server_err s b] prints an error response with status code [s] 
     and body [b].
