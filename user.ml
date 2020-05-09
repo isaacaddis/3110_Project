@@ -10,8 +10,16 @@ let state_ref = { session_id = ref "" }
 let json_from_string (str: string) : Yojson.Basic.t = 
   Yojson.Basic.from_string str
 
-let login name =
-  Client.post ~body:(Cohttp_lwt.Body.of_string name) 
+let construct_login_json name bet = 
+  "{ " ^
+  "name:" ^
+  name ^
+  ", session_id: " ^
+  string_of_int bet ^
+  "}"
+
+let login name bet =
+  Client.post ~body:(Cohttp_lwt.Body.of_string (construct_login_json name bet))
     (Uri.of_string "http://localhost:8000/login") >>= fun (resp, body) ->
   let code = resp |> Response.status |> Code.code_of_status in
   Printf.printf "\nResponse code: %d\n" code;
@@ -39,7 +47,9 @@ let () =
   print_endline "Welcome to blackjack. There's an open seat on the table";
   print_endline "Your name is: ";
   let name = read_line () in 
-  let session_id =  Lwt_main.run (login name) in
+  print_endline "Bet: ";
+  let bet = read_line () |> int_of_string in
+  let session_id =  Lwt_main.run (login name bet) in
   (state_ref.session_id) := session_id;
   print_endline ("Joined with session ID: " ^ (!(state_ref.session_id)));
   main !(state_ref.session_id) () 

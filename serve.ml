@@ -2,8 +2,9 @@ open Lwt
 open Cohttp
 open Cohttp_lwt_unix
 open State
+open Yojson
 
-type user_data = { name : string; state : State.t }
+type user_data = { name : string; bet: int;  state : State.t }
 
 type v = ((string, user_data) Hashtbl.t)
 
@@ -22,17 +23,17 @@ let is_full tbl =
   Hashtbl.length tbl >= 3
 
 (** [add_player s n] adds an entry to the database. *)
-let add_player (session_id: string) (name: string) tbl = 
-  Hashtbl.add tbl session_id { name = name; state = init_state };
+let add_player (session_id: string) (bet: int) (name: string) tbl = 
+  Hashtbl.add tbl session_id { name = name; bet = bet; state = init_state };
   (session_id, tbl)
 
 type status = Success of (string * ((string, user_data) Hashtbl.t)) | Failure
 
 (** [add_user t n] is a dictionary [d] of player [n] in table [t] *)
-let add_user tbl name =
+let add_user tbl name bet =
   let session_id = Random.int 100000 |> string_of_int in
   if is_full tbl then Failure else
-  Success (add_player session_id name tbl)
+  Success (add_player session_id bet name tbl)
 
 (** [contains s1 s2] is [true] when s2 is a substring of s1, 
     [false] otherwise.
@@ -49,18 +50,29 @@ let contains s1 s2 =
 let handle_play tbl session_id = 
   let state = check_user_connected tbl session_id in
   match state with
-  | Some st' -> Printf.sprintf "Authenticated player: %s" (st'.name) 
+  | Some res -> 
+      begin
+        let name = res.name in
+        let bet = res.bet in
+        let state  = res.state in
+        Printf.sprintf "Authorized: %s" name
+      end
   | None -> Printf.sprintf "Unauthorized access."
   
   
+let parse_json j =
+  let name = j |> member "name" in
+  let bet = j |> member "bet" in
+  (name, bet)
+
 let handle_response (uri: string) (body_string : string) =  
     let db = !db.connected_users in
     try
       if contains uri "/login" then
         begin
-        let at_table = (fun h -> Hashtbl.fold (fun k v acc -> k :: acc) h []
-         |> String.concat ", ") in 
-        match add_user db body_string with
+        let json = Yojson.Basic.from_string body_string in
+        let (name, bet) = parse_json json in
+        match add_user db name bet with
         | Success (id,tbl) ->
             Printf.sprintf "%s" id
         | Failure -> Printf.sprintf "The table is full."
