@@ -3,6 +3,18 @@ open Printf
 open Player
 open Controller
 open Parser
+open Yojson.Basic.Util
+
+(** [get_stats ()] searches for the file 'stats.json' to get the money for
+    the player, and if it doesn't exist, it makes a file 'stats.json'. *)
+let get_stats () =
+  if Sys.file_exists "stats.json" then
+    (** read in data from stats *)
+    let file = Yojson.Basic.from_file "stats.json" in
+    file |> to_assoc |> List.assoc "money" |> to_int
+  else
+    let file = open_out "stats.json" in
+    fprintf file "%s\n" "{\n\t\"money\": 500\n}"; close_out file; 1000
 
 (** [quit ()] prints a message and then exits the game. *)
 let quit () =
@@ -49,10 +61,10 @@ let rec game_loop p_turn st =
   print_st p_turn st;
   let status = check_st p_turn st in
   match status with
-  | (Blackjack, _) -> print_endline "You won!"; Blackjack
-  | (Win, _) -> print_endline "You won!"; Win
-  | (Draw, _) -> print_endline "You tied!"; Draw
-  | (Loss, _) -> print_endline "You lost!"; Loss
+  | (Blackjack, _) -> print_endline "You won!\n"; Blackjack
+  | (Win, _) -> print_endline "You won!\n"; Win
+  | (Draw, _) -> print_endline "You tied!\n"; Draw
+  | (Loss, _) -> print_endline "You lost!\n"; Loss
   | (Next, Next) ->
     begin
       match Parser.parse (game_msg st ())  with
@@ -88,16 +100,21 @@ let print_result pts =
 
 (** [play_game b] runs the Blackjack game with a bet [b]. *)
 let rec play_game st () = 
-  print_endline ("Welcome to blackjack! Get closer to 21 than the dealer without
-    busting! You have $"
-                 ^ (st |> player |> money |> string_of_int) ^ 
-                 ". Enter bet amount in dollars: ");
-  print_string "$";
+  let player_money = st |> player |> money in
+  print_string ("Welcome to blackjack! Get closer to 21 than the dealer without
+    busting! You have $" ^ (string_of_int player_money) ^ 
+    ". Enter bet amount in dollars:\n$");
   let bet = read_bet (read_line ()) in
-  let result = game_loop true st in
-  play_game (next_round st result bet) ()
+  if bet <= player_money then
+    let result = game_loop true st in
+    play_game (next_round st result bet) ()
+  else 
+    print_endline "You cannot bet more than you have. Please try again.\n";
+    play_game st ()
+
+let start_state = init_state (get_stats ())
 
 (** [main ()] runs the game, and gives the player instructions. *)
-let main () = play_game init_state ()
+let main () = play_game start_state ()
 
 let () = main ()

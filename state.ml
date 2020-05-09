@@ -2,15 +2,16 @@ open Card
 open Deck
 open Player
 open Parser
+open Printf
 
 type t = {deck: deck; dealer: Player.t; player: Player.t}
 
-let init_state = 
+let init_state money= 
   let d = shuffle_deck () in
   let d' = draw_two_cards d in
-  let d'' = d' |> deck |> draw_two_cards  in
+  let d'' = d' |> deck |> draw_two_cards in
   { deck = (deck d''); dealer = (make_player (cards d') 50000); player = 
-                                                                  (make_player (cards d'') 500) }
+    (make_player (cards d'') money) }
 
 (** [dealer_draw s] is the state [s] becomes after the dealer draws cards. *)
 let rec dealer_draw s = 
@@ -19,7 +20,7 @@ let rec dealer_draw s =
   if d_points >= 17 then s else
     let r = draw_card d in
     dealer_draw {deck = (deck r); 
-                 dealer = (make_player (cards r @ hand s.dealer) 50000); player = s.player}
+      dealer = (make_player (cards r @ hand s.dealer) 50000); player = s.player}
 
 let step s cmd = 
   let d = s.deck in
@@ -27,16 +28,17 @@ let step s cmd =
   match cmd with
   | Hit ->
     let new_s = { deck = (deck r); dealer = s.dealer; 
-                  player = make_player (cards r @ hand s.player) (money s.player) } in
+      player = make_player (cards r @ hand s.player) (money s.player) } in
     if points new_s.player = 21 then dealer_draw new_s
     else new_s
   | Stand -> dealer_draw s
   | Double -> 
     dealer_draw { deck = (deck r); dealer = s.dealer; 
-                  player = make_player (cards r @ hand s.player) (money s.player) }
+      player = make_player (cards r @ hand s.player) (money s.player) }
   | Quit -> failwith "unimplemented"
   | _ -> failwith "unimplemented"
 
+(** [x1_5 n] multiplies int [n] by 1.5, then reconverts to int. *)
 let x1_5 num = (1.5 *. float_of_int num) |> int_of_float
 
 (** [repl_m s m] is state [s] but with the player's money replaced with [m]*)
@@ -48,6 +50,12 @@ let x1_5 num = (1.5 *. float_of_int num) |> int_of_float
 (** [pm s] is the player's money in state [s]*)
 let pm s = s.player |> money
 
+(** [update_money m] updates the stats.json file with new money value [m]. *)
+let update_money money =
+  let file = open_out "stats.json" in
+  let out_string = "{ \n\t\"money\":" ^ string_of_int money ^ "\n}" in
+  fprintf file "%s\n" out_string; close_out file; money
+
 let step_round s win bet = 
   let d = shuffle_deck () in
   let d' = draw_two_cards d in
@@ -55,15 +63,15 @@ let step_round s win bet =
   { deck = (deck d''); 
     dealer = (make_player (cards d') 50000); 
     player = (make_player (cards d'') 
-                begin
-                  match win with
-                  | 1 -> pm s + (x1_5 bet)
-                  | 2  -> pm s + bet
-                  | 3 -> pm s - bet
-                  | 4 -> pm s
-                  | 5 -> failwith "player's money cannot change during a round"
-                  | _ -> failwith "step_round received invalid input"
-                end) }
+    begin
+      match win with
+      | 1 -> update_money (pm s + (x1_5 bet))
+      | 2  -> update_money (pm s + bet)
+      | 3 -> update_money (pm s - bet)
+      | 4 -> update_money (pm s)
+      | 5 -> failwith "player's money cannot change during a round"
+      | _ -> failwith "step_round received invalid input"
+    end) }
 
 
 let dealer s =

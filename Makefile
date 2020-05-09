@@ -5,7 +5,7 @@ MLIS=$(MODULES:=.mli)
 TEST=test.byte
 MAIN=main.byte
 OCAMLBUILD=ocamlbuild -use-ocamlfind 
-PKGS=unix,oUnit,str,ANSITerminal
+PKGS=unix,oUnit,str,ANSITerminal, yojson
 
 default: build
 	utop

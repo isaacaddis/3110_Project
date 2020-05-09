@@ -3,7 +3,7 @@ type t
 
 (** [init_state n] is the starting state of a round of black jack,
     where the dealer and the player have two cards each*)
-val init_state: t
+val init_state: int -> t
 
 (** [player t] returns the player from state [t]. *)
 val player: t -> Player.t
