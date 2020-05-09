@@ -5,7 +5,7 @@ open State
 
 type user_data = { name : string; state : State.t }
 
-let connected_user : ((string, user_data) Hashtbl.t) = Hashtbl.create 3
+let connected_users : ((string, user_data) Hashtbl.t) = Hashtbl.create 3
 
 (** [check_user_connected id] is [Some x] if [id] is connected *)
 let check_user_connected tbl (session_id: string) =
@@ -29,6 +29,13 @@ let add_user tbl name =
   if is_full tbl then Failure else
   Success (add_player session_id name tbl)
 
+let handle_response body_string = 
+    let name = body_string in 
+    let res = add_user connected_users name in
+    match res with
+    | Success tbl -> Printf.sprintf "successful"
+    | Failure -> Printf.sprintf "unimplemented"
+
 
 let server =
   let callback _conn req body =
@@ -36,9 +43,8 @@ let server =
     let meth = req |> Request.meth |> Code.string_of_method in
     let headers = req |> Request.headers |> Header.to_string in
     body |> Cohttp_lwt.Body.to_string >|= (fun body ->
-      (Printf.sprintf "Uri: %s\nMethod: %s\nHeaders\nHeaders: %s\nBody: %s"
-         uri meth headers body))
-    >>= (fun body -> Server.respond_string ~status:`OK ~body:body ())
+      (handle_response body))
+    >>= ( fun body -> Server.respond_string ~status:`OK ~body:body ())
   in
   Server.create ~mode:(`TCP (`Port 8000)) (Server.make ~callback ())
 
