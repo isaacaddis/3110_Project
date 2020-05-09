@@ -19,6 +19,9 @@ play:
 test:
 	BISECT_COVERAGE=YES $(OCAMLBUILD) -tag 'debug' $(TEST) && ./$(TEST) -runner sequential
 
+reset:
+	printf "{\n\t\"money\": 500\n}" > stats.json
+
 check:
 	bash checkenv.sh && bash checktypes.sh
 

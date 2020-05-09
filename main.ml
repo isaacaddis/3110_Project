@@ -66,9 +66,9 @@ let game_double st =
   | (Draw, _) -> print_endline "You tied!\n"; Draw
   | _ -> failwith "game_double should only be called after double down."
 
-(** [game_loop p s] loops the game with state [s] and boolean for player
-    turn [p]. *)
-let rec game_loop p_turn st =
+(** [game_loop b p s] loops the game with state [s] and boolean for player
+    turn [p], with player bet [b]. *)
+let rec game_loop bet p_turn st =
   print_endline "";
   print_st p_turn st;
   let status = check_st p_turn st in
@@ -81,13 +81,26 @@ let rec game_loop p_turn st =
     begin
       match Parser.parse (game_msg st ())  with
       | Quit -> quit ()
-      | Hit -> let st' = step st Hit in game_loop true st'
-      | Stand -> let st' = step st Stand in game_loop false st'
-      | Double -> let st' = step st Double in game_double st'
+      | Hit -> let st' = step st Hit in game_loop bet true st'
+      | Stand -> let st' = step st Stand in game_loop bet false st'
+      | Double -> 
+        let p_money = st |> player |> money in
+        let d_money = st |> dealer |> money in
+        if bet * 2 <= p_money && bet * 2 <= d_money then
+          let st' = step st Double in game_double st'
+        else
+          if bet * 2 > p_money then
+            (print_endline ("You cannot double down if you do not have more " ^ 
+            "than double your bet money. Please select a different option.");
+            game_loop bet p_turn st)
+          else
+            (print_endline ("Cannot double down if dealer does not have more " ^ 
+            "than double the bet money. Please select a different option.");
+            game_loop bet p_turn st)
       | Unknown -> 
         print_endline ("Unknown command. Please select a command from the " ^
-                       "options above.");
-        game_loop p_turn st
+          "options above.");
+        game_loop bet p_turn st
     end
   | _ -> failwith "an unexpected error occured"
 
@@ -97,7 +110,7 @@ let rec read_bet inp =
   try int_of_string inp
   with (Failure e) ->
     print_endline ("I could not understand that input. Please input an " ^
-                   "integer number of dollars to bet.");
+      "integer number of dollars to bet.");
     print_string "$";
     read_bet (read_line ())
 
@@ -110,7 +123,7 @@ let print_result pts =
     print_endline ("You lost " ^ string_of_int (-p) ^ " dollars.")
   else print_endline ("You won " ^ string_of_int p ^ " dollars.")
 
-(** [play_game b] runs the Blackjack game with a bet [b]. *)
+(** [play_game b s] runs the Blackjack game with state [s]. *)
 let rec play_game st () = 
   let player_money = st |> player |> money in
   let dealer_money = st |> dealer |> money in
@@ -119,9 +132,9 @@ let rec play_game st () =
     ". Enter bet amount in dollars:\n$");
   let bet = read_bet (read_line ()) in
   if bet <= player_money && bet <= dealer_money && bet > 0 then
-    let result = game_loop true st in
+    let result = game_loop bet true st in
     play_game (next_round st result bet) ()
-  else 
+  else
     if bet > player_money then
       (print_endline "You cannot bet more than you have. Please try again.\n";
       play_game st ())
