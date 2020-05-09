@@ -52,7 +52,14 @@ let check_st p_turn st =
       end
     else if d_cond = Natural then
       (print_endline ""; print_endline "Dealer has a blackjack!";
-      print_endline ("Your hand: " ^ hand_as_string player);
-      print_endline ("Dealer's hand: " ^ hand_as_string dealer);
-      (Loss, Win))
+       print_endline ("Your hand: " ^ hand_as_string player);
+       print_endline ("Dealer's hand: " ^ hand_as_string dealer);
+       (Loss, Win))
     else (Next, Next)
+
+let next_round s win bet = match win with
+  | Blackjack -> step_round s 1 bet
+  | Win -> step_round s 2 bet
+  | Loss -> step_round s 3 bet
+  | Draw -> step_round s 4 bet
+  | Next -> step_round s 5 bet
