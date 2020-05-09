@@ -31,15 +31,15 @@ let print_st (p_turn:bool) st =
   let player = player st in
   let dealer = dealer st in
   let player_hand_str = hand_as_string player in
-  let dealer_hand_str =
+  let dealer_msg =
     if p_turn then
-      hand_as_facedown_string dealer
+      "Dealer's hand:\n" ^ hand_as_facedown_string dealer
     else
-      hand_as_string dealer
+      "Dealer's hand: " ^ format_pts (points dealer) ^ "\n" ^ 
+        hand_as_string dealer
   in
-  let player_msg = "Your hand:" ^ format_pts (points player) ^ "\n" ^
+  let player_msg = "Your hand: " ^ format_pts (points player) ^ "\n" ^
     player_hand_str in
-  let dealer_msg = "Dealer's hand:\n" ^ dealer_hand_str in
   print_endline player_msg;
   print_endline dealer_msg
 
