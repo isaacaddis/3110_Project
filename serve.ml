@@ -21,11 +21,12 @@ let check_user_connected tbl (session_id: string) =
 let is_full tbl =
   Hashtbl.length tbl >= 3
 
+(** [add_player s n] adds an entry to the database. *)
 let add_player (session_id: string) (name: string) tbl = 
   Hashtbl.add tbl session_id { name = name; state = init_state };
-  tbl
+  (session_id, tbl)
 
-type status = Success of (string, user_data) Hashtbl.t | Failure
+type status = Success of (string * ((string, user_data) Hashtbl.t)) | Failure
 
 (** [add_user t n] is a dictionary [d] of player [n] in table [t] *)
 let add_user tbl name =
@@ -33,11 +34,9 @@ let add_user tbl name =
   if is_full tbl then Failure else
   Success (add_player session_id name tbl)
 
-let register_user connected_users (name : string) = 
-  add_user connected_users name
-
 (** [contains s1 s2] is [true] when s2 is a substring of s1, 
-    [false] otherwise.*) 
+    [false] otherwise.
+    Requires: [s2.length] <= [s1.length] *) 
 let contains s1 s2 =
     let re = Str.regexp_string s2
     in
@@ -53,14 +52,13 @@ let handle_play tbl session_id =
 let handle_response (uri: string) (body_string : string) =  
     let db = !db.connected_users in
     try
-      if contains "/login" uri then
+      if contains uri "/login" then
         begin
         let at_table = (fun h -> Hashtbl.fold (fun k v acc -> k :: acc) h []
          |> String.concat ", ") in 
         match add_user db body_string with
-        | Success tbl ->
-            Printf.sprintf "%s has joined successfully. At table: %s. "
-            body_string (at_table tbl)
+        | Success (id,tbl) ->
+            Printf.sprintf "%s" id
         | Failure -> Printf.sprintf "The table is full."
         end
       else handle_play db body_string
@@ -75,7 +73,7 @@ let server =
     let headers = req |> Request.headers |> Header.to_string in
     body |> Cohttp_lwt.Body.to_string >|= (fun body ->
       (handle_response uri body))
-    >>= ( fun body -> Server.respond_string ~status:`OK ~body:(body ^ uri) ())
+    >>= ( fun body -> Server.respond_string ~status:`OK ~body:body ())
   in
   Server.create ~mode:(`TCP (`Port 8000)) (Server.make ~callback ())
 
