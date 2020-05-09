@@ -48,10 +48,10 @@ let contains s1 s2 =
         try if Str.search_forward re s1 0 > -1 then true else false
         with Not_found -> false
 
-type start_conditions = Start| Wait
+type start_conditions = Start| Wait of int
 
 let check_start_condition tbl = 
-  if is_full tbl then Start else Wait
+  if is_full tbl then Start else Wait (Hashtbl.length tbl)
 
 (** [handle_play s] handles the main game loop response for session_id [s]
     Requires: [s] is a session_id that is in [db]
@@ -66,7 +66,8 @@ let handle_play ( session_id: string) =
           let state  = res.state in
           match check_start_condition !(db.connected_users) with
           | Start -> Printf.sprintf "Game running."
-          | Wait -> Printf.sprintf "Need 3 players to start game."
+          | Wait n -> 
+            Printf.sprintf "Need 3 players to start game. (%d/3 connected)\n" n
   with Not_found -> Printf.sprintf "Unauthorized access."
   
   

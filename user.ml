@@ -34,7 +34,7 @@ let play session_id =
     ~body:(Cohttp_lwt.Body.of_string (construct_play_json (session_id)) )
     (Uri.of_string "http://localhost:8000/play") >>= fun (resp, body) ->
   let code = resp |> Response.status |> Code.code_of_status in
-  Printf.printf "Response code (play): %d\n" code;
+  Printf.printf "\nResponse code (play): %d\n" code;
   body |> Cohttp_lwt.Body.to_string >|= fun body ->
   body
 
