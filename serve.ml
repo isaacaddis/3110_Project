@@ -11,9 +11,12 @@ type v = ((string, user_data) Hashtbl.t)
 
 let connected_users : v = Hashtbl.create 3
 
-type db = { mutable connected_users: v }
-let db = ref { connected_users = connected_users};;
+(* [db] is the state of the game *)
+type db = { turn: int ref; connected_users: v ref }
+let db = { turn = ref 0; connected_users = ref connected_users};;
 
+let next_turn =
+  (db.turn) := (!(db.turn) + 1) mod 3
 (** [check_user_connected id] is [Some x] if [id] is connected *)
 let check_user_connected tbl (session_id: string) : user_data option=
   Hashtbl.find_opt tbl session_id
@@ -25,7 +28,7 @@ let is_full tbl =
 
 (** [add_player s n] adds an entry to the database. *)
 let add_player (session_id: string) (bet: int) (name: string) tbl = 
-  Hashtbl.add tbl session_id { name = name; bet = bet; state = init_state };
+  Hashtbl.add tbl session_id { name = name; bet = bet; state = init_state bet};
   (session_id, tbl)
 
 type status = Success of (string * ((string, user_data) Hashtbl.t)) | Failure
@@ -55,13 +58,13 @@ let check_start_condition tbl =
     Effects: prints to console *)
 let handle_play ( session_id: string) = 
   try
-    let state = Hashtbl.find (!db.connected_users) (session_id) in
+    let state = Hashtbl.find !(db.connected_users) (session_id) in
     match state with
     | res -> 
           let name = res.name in
           let bet = res.bet in
           let state  = res.state in
-          match check_start_condition (!db.connected_users) with
+          match check_start_condition !(db.connected_users) with
           | Start -> Printf.sprintf "Game running."
           | Wait -> Printf.sprintf "Need 3 players to start game."
   with Not_found -> Printf.sprintf "Unauthorized access."
@@ -77,7 +80,7 @@ let parse_play_json (j: Yojson.Basic.t) : string =
   session_id
 
 let handle_response (uri: string) (body_string : string) =  
-    let db = !db.connected_users in
+    let db = !(db.connected_users) in
     let json = Yojson.Basic.from_string body_string in
     try
       if contains uri "/login" then

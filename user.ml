@@ -42,7 +42,7 @@ let minisleep (sec: float) =
   Unix.sleepf sec
 
 let rec main session_id () = 
-  minisleep 5.;
+  minisleep 1.;
   let response = Lwt_main.run (play session_id) in
   print_endline ("Received response\n" ^ response);
   main session_id ()
