@@ -2,12 +2,11 @@ open Card
 open Deck
 open Player
 open Parser
-open Controller
 
 type t = {deck: deck; dealer: Player.t; player: Player.t}
 
 let init_state = 
-  let d = shuffle_deck in
+  let d = shuffle_deck () in
   let d' = draw_two_cards d in
   let d'' = d' |> deck |> draw_two_cards  in
   { deck = (deck d''); dealer = (make_player (cards d') 50000); player = 
@@ -41,24 +40,31 @@ let step s cmd =
 let x1_5 num = (1.5 *. float_of_int num) |> int_of_float
 
 (** [repl_m s m] is state [s] but with the player's money replaced with [m]*)
-let repl_m s m =
+(*let repl_m s m =
   { deck = s.deck;
     dealer = s.dealer;
-    player = make_player (s.player |> hand) m }
+    player = make_player (s.player |> hand) m }*)
 
 (** [pm s] is the player's money in state [s]*)
 let pm s = s.player |> money
 
 let step_round s win bet = 
-  let st' = init_state in 
-  (*using init_state here is kind of sketchy because this would presumably be 
-    reading from the save file and I don't know how that works yet*)
-  match win with
-  | Blackjack -> repl_m st' (pm s + (x1_5 bet))
-  | Win  -> repl_m st' (pm s + bet)
-  | Loss -> repl_m st' (pm s - bet)
-  | Draw -> repl_m st' (pm s)
-  | Next -> failwith "player's money cannot change during a round"
+  let d = shuffle_deck () in
+  let d' = draw_two_cards d in
+  let d'' = d' |> deck |> draw_two_cards  in
+  { deck = (deck d''); 
+    dealer = (make_player (cards d') 50000); 
+    player = (make_player (cards d'') 
+                begin
+                  match win with
+                  | 1 -> pm s + (x1_5 bet)
+                  | 2  -> pm s + bet
+                  | 3 -> pm s - bet
+                  | 4 -> pm s
+                  | 5 -> failwith "player's money cannot change during a round"
+                  | _ -> failwith "step_round received invalid input"
+                end) }
+
 
 let dealer s =
   s.dealer

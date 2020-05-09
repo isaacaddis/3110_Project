@@ -15,5 +15,11 @@ val dealer: t -> Player.t
 val step : t -> Parser.commands -> t
 
 (** [step_round s win bet] is a fresh round of blackjack, with the player's
-    money updated according to the result [win] and wager [bet]*)
-val step_round : t -> Controller.win_condition -> int -> t 
+    money updated according to the result [win] and wager [bet].
+    These are what the possible values of [win] correspond to:
+    1: Blackjack victory,
+    2: Normal Victory,
+    3: Loss,
+    4: Draw,
+    Other: Causes a failure*)
+val step_round : t -> int -> int -> t 
