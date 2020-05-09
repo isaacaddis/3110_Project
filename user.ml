@@ -11,9 +11,8 @@ let login name =
   Client.post ~body:(Cohttp_lwt.Body.of_string name) 
     (Uri.of_string "http://localhost:8000/login") >>= fun (resp, body) ->
   let code = resp |> Response.status |> Code.code_of_status in
-  Printf.printf "Response code: %d\n" code;
+  Printf.printf "\nResponse code: %d\n" code;
   body |> Cohttp_lwt.Body.to_string >|= fun body ->
-  Printf.printf "Body of length: %d\n Body: \n" (String.length body);
   body
 
 let play session_id =
@@ -40,5 +39,5 @@ let () =
   let name = read_line () in 
   let session_id =  Lwt_main.run (login name) in
   (state_ref.session_id) := session_id;
-  print_endline ("SESSION ID IS " ^ (!(state_ref.session_id)));
+  print_endline ("Joined with session ID: " ^ (!(state_ref.session_id)));
   main !(state_ref.session_id) () 
