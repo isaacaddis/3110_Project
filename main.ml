@@ -101,16 +101,24 @@ let print_result pts =
 (** [play_game b] runs the Blackjack game with a bet [b]. *)
 let rec play_game st () = 
   let player_money = st |> player |> money in
+  let dealer_money = st |> dealer |> money in
   print_string ("Welcome to blackjack! Get closer to 21 than the dealer without
     busting! You have $" ^ (string_of_int player_money) ^ 
     ". Enter bet amount in dollars:\n$");
   let bet = read_bet (read_line ()) in
-  if bet <= player_money then
+  if bet <= player_money && bet <= dealer_money && bet > 0 then
     let result = game_loop true st in
     play_game (next_round st result bet) ()
   else 
-    print_endline "You cannot bet more than you have. Please try again.\n";
-    play_game st ()
+    if bet > player_money then
+      (print_endline "You cannot bet more than you have. Please try again.\n";
+      play_game st ())
+    else if bet > dealer_money then
+      (print_endline ("You cannot bet more than the dealer has. Please bet " ^ 
+      "lower, or switch to another dealer.\n"); play_game st ())
+    else
+      print_endline ("You must bet more than 0 dollars. Please try again.\n");
+      play_game st ()
 
 let start_state = init_state (get_stats ())
 
