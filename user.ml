@@ -51,5 +51,12 @@ let () =
   let bet = read_line () |> int_of_string in
   let session_id =  Lwt_main.run (login name bet) in
   (state_ref.session_id) := session_id;
-  print_endline ("Joined with session ID: " ^ (!(state_ref.session_id)));
+  let session_id' = 
+    begin
+      match session_id with
+      | "The table is full." -> failwith "You cannot join a full game."
+      | x -> x
+    end
+  in
+  print_endline ("Joined with session ID: " ^ session_id');
   main !(state_ref.session_id) () 
