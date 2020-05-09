@@ -104,7 +104,7 @@ let rec card_string_lst_to_string acc (lst : (string list) list) =
       let remaining = List.map List.tl lst in
       card_string_lst_to_string (acc ^ append ^ "\n") remaining 
     else acc
-  | [] -> acc
+  | _ -> acc
 
 let card_facedown_to_ascii_string (hand : t list) = 
   let top = List.hd hand in

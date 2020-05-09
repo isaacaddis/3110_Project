@@ -23,10 +23,6 @@ let card_tests = [
 ]
 
 let deck_tests = 
-  let shuffled = shuffle_deck () in
-  let drew_two = draw_two_cards shuffled in
-  let remaining_cards = deck drew_two in
-  let cards_drawn = cards drew_two in
 [
   (** Make test cases for these, or maybe combine this stuff with other stuff
       for test cases. *)
@@ -52,10 +48,6 @@ let player_tests =
       (points (make_player ((make_card 1 3)::cards) 500)) 12;
     eq_test "Player points bust, four aces, a nine, and a king equals 22" 
       (points (make_player ((make_card 1 1)::(make_card 12 1)::cards) 500)) 22;
-    eq_test "Player hand as string equals its cards converted to string"
-      (hand_as_string player) "A of Diamonds, A of Spades, 9 of Diamonds";
-    eq_test "Player2 hand as string equals its cards converted to string"
-      (hand_as_string player2) "5 of Hearts, K of Spades";
   ]
 
 let state_tests = 

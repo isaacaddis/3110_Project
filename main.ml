@@ -122,10 +122,18 @@ let print_result pts =
     print_endline ("You lost " ^ string_of_int (-p) ^ " dollars.")
   else print_endline ("You won " ^ string_of_int p ^ " dollars.")
 
+(** [check_bankrupt m] quites the game if [m] is equal to 0. *)
+let check_bankrupt money =
+  if money = 0 then
+    (print_endline ("\nYou gamble away your life savings. Your wife leaves " ^ 
+    "you. You are a broken man.\n"); exit 0)
+  else ()
+
 (** [play_game b s] runs the Blackjack game with state [s]. *)
 let rec play_game st () = 
   let player_money = st |> player |> money in
   let dealer_money = st |> dealer |> money in
+  check_bankrupt player_money;
   print_string ("Welcome to blackjack! Get closer to 21 than the dealer without
     busting! You have $" ^ (string_of_int player_money) ^ 
     ". Enter bet amount in dollars:\n$");
