@@ -26,7 +26,7 @@ let match_suit n =
   | n when n < 52 -> 4
   | _ -> failwith "n must be in [0...51]"
 
-let shuffle_deck =
+let shuffle_deck () =
   let rec make_deck n acc =
     match n with
     | n when n < 52 -> 

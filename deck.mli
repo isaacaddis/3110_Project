@@ -9,7 +9,7 @@ type res
 val cards : res -> Card.t list
 
 (** [shuffle_deck d] is a full 52-card shuffled deck.  *)
-val shuffle_deck : deck
+val shuffle_deck : unit -> deck
 
 (** [draw_two_cards d] returns a result containing the two cards drawn, and
     the remaining cards in a separate deck. *)
