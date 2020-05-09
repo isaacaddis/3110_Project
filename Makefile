@@ -6,8 +6,8 @@ TEST=test.byte
 MAIN=main.byte
 CLIENT=user.byte
 SERVER=serve.byte
-OCAMLBUILD=corebuild -cflag -thread -use-ocamlfind -pkg cohttp-lwt-unix
-PKGS=unix,oUnit,str,ANSITerminal,cohttp-lwt-unix,lwt,Cohttp
+OCAMLBUILD=corebuild -cflag -thread -use-ocamlfind -pkgs cohttp-lwt-unix,yojson,str
+PKGS=unix,oUnit,str,ANSITerminal,cohttp-lwt-unix,lwt,cohttp,yojson
 
 default: build
 	utop

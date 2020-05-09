@@ -29,16 +29,36 @@ let add_user tbl name =
   if is_full tbl then Failure else
   Success (add_player session_id name tbl)
 
-let handle_response body_string : string =  
-    let name = body_string in 
-    let res = add_user connected_users name in
-    let at_table = (fun h -> Hashtbl.fold (fun k v acc -> k :: acc) h []
-     |> String.concat ", ") in 
-    match res with
-    | Success tbl ->
-        Printf.sprintf "%s has joined successfully. At table: %s. " name
-        (at_table tbl)
-    | Failure -> Printf.sprintf "The table is full."
+let register_user connected_users (name : string) = 
+  add_user connected_users name
+
+(** [contains s1 s2] is [true] when s2 is a substring of s1, 
+    [false] otherwise.*) 
+let contains s1 s2 =
+    let re = Str.regexp_string s2
+    in
+        try if Str.search_forward re s1 0 > -1 then true else false
+        with Not_found -> false
+
+let handle_play session_id = 
+  Printf.sprintf "Game action: %s" session_id
+  
+let handle_response (uri: string) (body_string : string) =  
+    try
+      if contains "/login" uri then
+        begin
+        let at_table = (fun h -> Hashtbl.fold (fun k v acc -> k :: acc) h []
+         |> String.concat ", ") in 
+        match add_user connected_users body_string with
+        | Success tbl ->
+            Printf.sprintf "%s has joined successfully. At table: %s. "
+            body_string (at_table tbl)
+        | Failure -> Printf.sprintf "The table is full."
+        end
+      else handle_play body_string
+    with Not_found -> handle_play body_string
+
+
 
 let server =
   let callback _conn req body =
@@ -46,8 +66,8 @@ let server =
     let meth = req |> Request.meth |> Code.string_of_method in
     let headers = req |> Request.headers |> Header.to_string in
     body |> Cohttp_lwt.Body.to_string >|= (fun body ->
-      (handle_response body))
-    >>= ( fun body -> Server.respond_string ~status:`OK ~body:body ())
+      (handle_response uri body))
+    >>= ( fun body -> Server.respond_string ~status:`OK ~body:(body ^ uri) ())
   in
   Server.create ~mode:(`TCP (`Port 8000)) (Server.make ~callback ())
 
