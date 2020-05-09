@@ -47,11 +47,10 @@ let contains s1 s2 =
     Requires: [s] is a session_id that is in [tbl]
     Effects: prints to console *)
 let handle_play tbl session_id = 
-  let state = Hashtabl.check_user_connected tbl session_id in
+  let state = check_user_connected tbl session_id in
   match state with
   | Some st' -> Printf.sprintf "Authenticated player: %s" (st'.name) 
   | None -> Printf.sprintf "Unauthorized access."
-  Printf.sprintf "Game action: %s" session_id
   
   
 let handle_response (uri: string) (body_string : string) =  

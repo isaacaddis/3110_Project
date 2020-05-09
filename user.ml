@@ -7,6 +7,9 @@ type state = { session_id: string ref }
 
 let state_ref = { session_id = ref "" }
 
+let json_from_string (str: string) : Yojson.Basic.t = 
+  Yojson.Basic.from_string str
+
 let login name =
   Client.post ~body:(Cohttp_lwt.Body.of_string name) 
     (Uri.of_string "http://localhost:8000/login") >>= fun (resp, body) ->
@@ -19,9 +22,8 @@ let play session_id =
   Client.post ~body:(Cohttp_lwt.Body.of_string session_id) 
     (Uri.of_string "http://localhost:8000/play") >>= fun (resp, body) ->
   let code = resp |> Response.status |> Code.code_of_status in
-  Printf.printf "Response code: %d\n" code;
+  Printf.printf "Response code (play): %d\n" code;
   body |> Cohttp_lwt.Body.to_string >|= fun body ->
-  Printf.printf "Body of length: %d\n" (String.length body);
   body
 
 let minisleep (sec: float) =
