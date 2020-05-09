@@ -32,8 +32,12 @@ let add_user tbl name =
 let handle_response body_string : string =  
     let name = body_string in 
     let res = add_user connected_users name in
+    let at_table = (fun h -> Hashtbl.fold (fun k v acc -> k :: acc) h []
+     |> String.concat ", ") in 
     match res with
-    | Success tbl -> Printf.sprintf "%s has joined successfully." name
+    | Success tbl ->
+        Printf.sprintf "%s has joined successfully. At table: %s. " name
+        (at_table tbl)
     | Failure -> Printf.sprintf "The table is full."
 
 let server =
