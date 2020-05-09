@@ -63,11 +63,12 @@ let update_money money =
     bet [b] and condition [w]. *)
 let calc_money s win bet =
   match win with
-    | 1 -> update_money (x1_5 bet)
-    | 2  -> update_money bet
-    | 3 -> update_money (-bet)
-    | 4 -> update_money 0
-    | 5 -> failwith "player's money cannot change during a round"
+    | 1 -> x1_5 bet
+    | 2  -> bet
+    | 3 -> -bet
+    | 4 -> 0
+    | 5 -> bet * 2
+    | 6 -> bet * -2
     | _ -> failwith "step_round received invalid input"
 
 let step_round s win bet = 

@@ -21,5 +21,7 @@ val step : t -> Parser.commands -> t
     2: Normal Victory,
     3: Loss,
     4: Draw,
+    5: Double down victory,
+    6: Double down loss,
     Other: Causes a failure*)
 val step_round : t -> int -> int -> t 
