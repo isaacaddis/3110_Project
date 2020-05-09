@@ -14,7 +14,7 @@ let check_user_connected tbl (session_id: string) =
 (** [is_full t] is [false] when there are 2 players or less at the table [t],
     [true] otherwise. *)
 let is_full tbl =
-  Hashtbl.length tbl > 3
+  Hashtbl.length tbl >= 3
 
 let add_player (session_id: string) (name: string) tbl = 
   Hashtbl.add tbl session_id { name = name; state = init_state };
@@ -29,13 +29,12 @@ let add_user tbl name =
   if is_full tbl then Failure else
   Success (add_player session_id name tbl)
 
-let handle_response body_string = 
+let handle_response body_string : string =  
     let name = body_string in 
     let res = add_user connected_users name in
     match res with
-    | Success tbl -> Printf.sprintf "successful"
-    | Failure -> Printf.sprintf "unimplemented"
-
+    | Success tbl -> Printf.sprintf "%s has joined successfully." name
+    | Failure -> Printf.sprintf "The table is full."
 
 let server =
   let callback _conn req body =
