@@ -3,6 +3,10 @@ open Cohttp
 open Cohttp_lwt_unix
 open Yojson
 
+type state = { session_id: string ref }
+
+let state_ref = { session_id = ref "" }
+
 let login name =
   Client.post ~body:(Cohttp_lwt.Body.of_string name) 
     (Uri.of_string "http://localhost:8000/login") >>= fun (resp, body) ->
@@ -34,5 +38,7 @@ let () =
   print_endline "Welcome to blackjack. There's an open seat on the table";
   print_endline "Your name is: ";
   let name = read_line () in 
-  let session_id = Lwt_main.run (login name) in
-  main session_id () 
+  let session_id =  Lwt_main.run (login name) in
+  (state_ref.session_id) := session_id;
+  print_endline ("SESSION ID IS " ^ (!(state_ref.session_id)));
+  main !(state_ref.session_id) () 
