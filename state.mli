@@ -25,3 +25,7 @@ val step : t -> Parser.commands -> t
     6: Double down loss,
     Other: Causes a failure*)
 val step_round : t -> int -> int -> t 
+
+(** [test_state d] is a non randomized state for testing purposes
+    created from deck [d]. *)
+val test_state : Deck.deck -> t

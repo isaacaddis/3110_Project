@@ -10,8 +10,9 @@ let init_state money=
   let d = shuffle_deck () in
   let d' = draw_two_cards d in
   let d'' = d' |> deck |> draw_two_cards in
-  { deck = (deck d''); dealer = (make_player (cards d') 50000); player = 
-    (make_player (cards d'') money) }
+  { deck = (deck d''); 
+    dealer = (make_player (cards d') 50000); 
+    player = (make_player (cards d'') money) }
 
 (** [pm s] is the player's money in state [s]*)
 let pm s = s.player |> money
@@ -26,8 +27,8 @@ let rec dealer_draw s =
   if d_points >= 17 then s else
     let r = draw_card d in
     dealer_draw {deck = (deck r); 
-      dealer = (make_player (cards r @ hand s.dealer) (dm s));
-      player = s.player}
+                 dealer = (make_player (cards r @ hand s.dealer) (dm s));
+                 player = s.player}
 
 let step s cmd = 
   let d = s.deck in
@@ -35,24 +36,18 @@ let step s cmd =
   match cmd with
   | Hit ->
     let new_s = { deck = (deck r); dealer = s.dealer; 
-      player = make_player (cards r @ hand s.player) (money s.player) } in
+                  player = make_player (cards r @ hand s.player) (money s.player) } in
     if points new_s.player = 21 then dealer_draw new_s
     else new_s
   | Stand -> dealer_draw s
   | Double -> 
     dealer_draw { deck = (deck r); dealer = s.dealer; 
-      player = make_player (cards r @ hand s.player) (money s.player) }
+                  player = make_player (cards r @ hand s.player) (money s.player) }
   | Quit -> failwith "unimplemented"
   | _ -> failwith "unimplemented"
 
 (** [x1_5 n] multiplies int [n] by 1.5, then reconverts to int. *)
 let x1_5 num = (1.5 *. float_of_int num) |> int_of_float
-
-(** [repl_m s m] is state [s] but with the player's money replaced with [m]*)
-(*let repl_m s m =
-  { deck = s.deck;
-    dealer = s.dealer;
-    player = make_player (s.player |> hand) m }*)
 
 (** [update_money m] updates the stats.json file with new money value [m]. *)
 let update_money money =
@@ -64,13 +59,13 @@ let update_money money =
     bet [b] and condition [w]. *)
 let calc_money s win bet =
   match win with
-    | 1 -> x1_5 bet
-    | 2  -> bet
-    | 3 -> -bet
-    | 4 -> 0
-    | 5 -> bet * 2
-    | 6 -> bet * -2
-    | _ -> failwith "step_round received invalid input"
+  | 1 -> x1_5 bet
+  | 2  -> bet
+  | 3 -> -bet
+  | 4 -> 0
+  | 5 -> bet * 2
+  | 6 -> bet * -2
+  | _ -> failwith "step_round received invalid input"
 
 let step_round s win bet = 
   let d = shuffle_deck () in
@@ -87,3 +82,12 @@ let dealer s =
 
 let player s = 
   s.player
+
+let test_state d =
+  let d' = draw_two_cards d in
+  let d'' = d' |> deck |> draw_two_cards in
+  {
+    deck = deck d'';
+    dealer = (make_player (cards d') 50000); 
+    player = (make_player (cards d'') 50000); 
+  }
