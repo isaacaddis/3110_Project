@@ -1,7 +1,7 @@
 type commands = Stand | Hit | Quit | Double | Unknown
 
 let parse str =
-  match String.lowercase str with
+  match String.lowercase_ascii str with
   | "stand" -> Stand
   | "hit" -> Hit
   | "quit" -> Quit

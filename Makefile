@@ -27,6 +27,9 @@ client:
 test:
 	BISECT_COVERAGE=YES $(OCAMLBUILD) -tag 'debug' $(TEST) && ./$(TEST) -runner sequential
 
+reset:
+	printf "{\n\t\"money\": 500\n}" > stats.json
+
 check:
 	bash checkenv.sh && bash checktypes.sh
 
@@ -38,7 +41,7 @@ bisect: clean test
 	bisect-ppx-report -I _build -html report bisect0001.out
 
 zip:
-	zip src.zip *.ml* _tags Makefile  
+	zip src.zip *.ml* _tags Makefile INSTALL.txt
 
 docs: docs-public docs-private
 

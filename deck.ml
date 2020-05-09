@@ -1,14 +1,14 @@
 open Card
 
-type deck = card list
-type res = { cards: card list; deck: deck }
+type deck = Card.t list
+type res = { cards: Card.t list; deck: deck }
 
 let cards r =
   r.cards
 
 let cards_to_string (r: res) =
   let cards = cards r in
-  let rec concat (c: card list) (acc: string list) =
+  let rec concat (c: Card.t list) (acc: string list) =
     match c with
     | [] -> acc
     | x :: xs -> concat xs ((to_string (x)) :: acc)
@@ -26,7 +26,7 @@ let match_suit n =
   | n when n < 52 -> 4
   | _ -> failwith "n must be in [0...51]"
 
-let shuffle_deck =
+let shuffle_deck () =
   let rec make_deck n acc =
     match n with
     | n when n < 52 -> 
