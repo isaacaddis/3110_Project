@@ -5,8 +5,8 @@ open Player
 open State
 
 (** Test Plan: We tested all of the methods that were not based on direct inputs
-    from the user. The methods that we play tested were in main.ml and some of
-    deck.ml and state.ml, since drawing and playing isn't standardized and the
+    from the user. The methods that we play tested were in main.ml, deck.ml,
+    and state.ml, since drawing and playing isn't standardized and the
     cards you draw would be different every time. We also manually tested the
     methods that would read/write information to/from a JSON. To test everything
     else in this, we wrote general cases and edge cases for methods. *)
@@ -70,6 +70,10 @@ let state_tests =
   let loss2 = step_round st 3 100 in
   let draw = step_round st 4 300 in
   let draw2 = step_round st 4 500 in
+  let dwin = step_round st 5 250 in
+  let dwin2 = step_round st 5 100 in
+  let dloss = step_round st 6 250 in
+  let dloss2 = step_round st 6 100 in
   let blackjack3 = step_round blackjack2 1 500 in
   [
     eq_test "Player who just starts in st with 500 in stats file has $500" 
@@ -107,6 +111,22 @@ let state_tests =
       (money (player draw2)) 500;
     eq_test "Dealer who tied with bet $500 gains nothing, has $50000"
       (money (dealer draw2)) 50000;
+    eq_test "Player who won with double $250 gains $500, has $1000"
+      (money (player dwin)) 1000;
+    eq_test "Dealer who lost with double $250 loses $500, has $49500"
+      (money (dealer dwin)) 49500;
+    eq_test "Player who won with double $100 gains $200, has $700"
+      (money (player dwin2)) 700;
+    eq_test "Dealer who lost with double $100 loses $200, has $49800"
+      (money (dealer dwin2)) 49800;
+    eq_test "Player who lost with double $250 loses $500, has $0"
+      (money (player dloss)) 0;
+    eq_test "Dealer who won with double $250 wins $500, has $50500"
+      (money (dealer dloss)) 50500;
+    eq_test "Player who lost with double $100 loses $200, has $300"
+      (money (player dloss2)) 300;
+    eq_test "Dealer who lost with double $100 wins $200, has $50200"
+      (money (dealer dloss2)) 50200;
     eq_test ("Test continuity, player wins blackjack with bet $500 gains " ^ 
       "$750 again, has $2000") (money (player blackjack3)) 2000;
     eq_test ("Test continuity, dealer loses blackjack with bet $500 loses " ^ 
