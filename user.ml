@@ -11,12 +11,10 @@ let json_from_string (str: string) : Yojson.Basic.t =
   Yojson.Basic.from_string str
 
 let construct_login_json name bet = 
-  "{ " ^
-  "name:" ^
-  name ^
-  ", session_id: " ^
-  string_of_int bet ^
-  "}"
+  "{ \"name\" : \"" ^ 
+  name ^ 
+  "\", \"bet\" : " ^ 
+  (string_of_int bet) ^ " }"
 
 let login name bet =
   Client.post ~body:(Cohttp_lwt.Body.of_string (construct_login_json name bet))

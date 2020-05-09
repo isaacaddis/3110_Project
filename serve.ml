@@ -3,6 +3,7 @@ open Cohttp
 open Cohttp_lwt_unix
 open State
 open Yojson
+open Yojson.Basic.Util
 
 type user_data = { name : string; bet: int;  state : State.t }
 
@@ -60,9 +61,9 @@ let handle_play tbl session_id =
   | None -> Printf.sprintf "Unauthorized access."
   
   
-let parse_json j =
-  let name = j |> member "name" in
-  let bet = j |> member "bet" in
+let parse_json (j: Yojson.Basic.t) : (string * int) =
+  let name = j |> member "name" |> to_string in
+  let bet = j |> member "bet" |> to_int in
   (name, bet)
 
 let handle_response (uri: string) (body_string : string) =  
