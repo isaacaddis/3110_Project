@@ -62,21 +62,20 @@ let rec game_loop p_turn st =
       | Double -> let st' = step st Double in game_loop false st'
       | Unknown -> 
         print_endline ("Unknown command. Please select a command from the " ^
-         "options above.");
+                       "options above.");
         game_loop p_turn st
     end
   | _ -> failwith "an unexpected error occured"
 
-(** [play_game b] runs the Blackjack game with a bet [b]. *)
-let play_game (bet: int) () = 
-  let st = init_state in
-  let bet = float_of_int bet in
-  match game_loop true st with
-  | Blackjack -> 1.5 *. bet
-  | Win -> bet
-  | Draw -> 0.
-  | Loss -> -1. *. bet
-  | _ -> failwith "an error occured"
+(** [read_bet inp] runs the game state if [inp] is a proper integer bet,
+    and asks for reinput if the [inp] is not appropriate.*)
+let rec read_bet inp =
+  try int_of_string inp
+  with (Failure e) ->
+    print_endline ("I could not understand that input. Please input an " ^
+                   "integer number of dollars to bet.");
+    print_string "$";
+    read_bet (read_line ())
 
 (** [print_result p] prints the result depending on the dollars that you
     gained or lost. *)
@@ -87,22 +86,18 @@ let print_result pts =
     print_endline ("You lost " ^ string_of_int (-p) ^ " dollars.")
   else print_endline ("You won " ^ string_of_int p ^ " dollars.")
 
-(** [read_bet inp] runs the game state if [inp] is a proper integer bet,
-    and asks for reinput if the [inp] is not appropriate.*)
-let rec read_bet inp =
-  try int_of_string inp
-  with (Failure e) ->
-    print_endline ("I could not understand that input. Please input an " ^
-      "integer number of dollars to bet.");
-    print_string "$";
-    read_bet (read_line ())
+(** [play_game b] runs the Blackjack game with a bet [b]. *)
+let rec play_game st () = 
+  print_endline ("Welcome to blackjack! Get closer to 21 than the dealer without
+    busting! You have $"
+                 ^ (st |> player |> money |> string_of_int) ^ 
+                 ". Enter bet amount in dollars: ");
+  print_string "$";
+  let bet = read_bet (read_line ()) in
+  let result = game_loop true st in
+  play_game (next_round st result bet) ()
 
 (** [main ()] runs the game, and gives the player instructions. *)
-let main () = 
-  print_endline "Welcome to blackjack! Get closer to 21 than the dealer without
-    busting! Enter bet amount in dollars: ";
-  print_string "$";
-  let pts = play_game (read_bet (read_line ())) () in
-  print_result pts
+let main () = play_game init_state ()
 
 let () = main ()
