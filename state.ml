@@ -23,7 +23,7 @@ let dm s = s.dealer |> money
 (** [pause s] pauses, prints a period, and decrements [s] until it is 0. *)
 let rec pause t =
   if t <= 0 then print_endline ""
-  else (print_endline "."; Unix.sleepf 0.6; pause (t-1))
+  else (print_endline "."; Unix.sleepf 0.4; pause (t-1))
 
 (** [dealer_draw s] is the state [s] becomes after the dealer draws a card. *)
 let dealer_draw s = 
@@ -56,7 +56,6 @@ let step s cmd =
 (** [x1_5 n] multiplies int [n] by 1.5, then reconverts to int. *)
 let x1_5 num = (1.5 *. float_of_int num) |> int_of_float
 
-(** [update_money m] updates the stats.json file with new money value [m]. *)
 let update_money money =
   let file = open_out "stats.json" in
   let out_string = "{ \n\t\"money\":" ^ string_of_int money ^ "\n}" in

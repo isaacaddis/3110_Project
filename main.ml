@@ -3,18 +3,6 @@ open Printf
 open Player
 open Controller
 open Parser
-open Yojson.Basic.Util
-
-(** [get_stats ()] searches for the file 'stats.json' to get the money for
-    the player, and if it doesn't exist, it makes a file 'stats.json'. *)
-let get_stats () =
-  if Sys.file_exists "stats.json" then
-    (** read in data from stats *)
-    let file = Yojson.Basic.from_file "stats.json" in
-    file |> to_assoc |> List.assoc "money" |> to_int
-  else
-    let file = open_out "stats.json" in
-    fprintf file "%s\n" "{\n\t\"money\": 500\n}"; close_out file; 1000
 
 (** [quit ()] prints a message and then exits the game. *)
 let quit () =

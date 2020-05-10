@@ -83,33 +83,34 @@ let card_to_index_suit (card: t) =
   | Ace -> 0, s
   | Int i -> (i-1), s
 
-(** [to_string_lst i s] returns a string list depending on index [i] and
+(** [to_string_lst i s] returns an option string list depending on index [i] and
     suit [s]. *)
 let to_string_lst (i, s) =
   match s with
-  | Diamonds -> List.nth diamonds i
-  | Spades -> List.nth spades i
-  | Hearts -> List.nth hearts i
-  | Clubs -> List.nth clubs i
+  | Diamonds -> List.nth_opt diamonds i
+  | Spades -> List.nth_opt spades i
+  | Hearts -> List.nth_opt hearts i
+  | Clubs -> List.nth_opt clubs i
 
 (** [card_string_lst_to_string a l] turns a list of string lists that
     represent cards into a full string that is the ASCII art for list [l],
     using accumulator [a]. *)
-let rec card_string_lst_to_string acc (lst : (string list) list) =
+let rec card_string_lst_to_string acc (lst : ((string list) option) list) =
   match lst with
-  | h::t ->
-    if List.length h > 0 then
-      let append_lst = List.map List.hd lst in
+  | h::_ ->
+    if List.length (Option.get h) > 0 then
+      let append_lst = List.map (fun x -> x |> Option.get |> List.hd) lst in
       let append = List.fold_left (^) "" append_lst in
-      let remaining = List.map List.tl lst in
-      card_string_lst_to_string (acc ^ append ^ "\n") remaining 
+      let remaining = List.map 
+        (fun x -> Some (x |> Option.get |> List.tl)) lst in
+      card_string_lst_to_string (acc ^ append ^ "\n") remaining
     else acc
   | _ -> acc
 
 let card_facedown_to_ascii_string (hand : t list) = 
   let top = List.hd hand in
   let (i,s) = card_to_index_suit top in
-  let cards = (to_string_lst (i,s))::[face_down] in
+  let cards = (to_string_lst (i,s))::[Some face_down] in
   card_string_lst_to_string "" cards
 
 let cards_to_ascii_string (cards : t list) =
