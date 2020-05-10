@@ -28,3 +28,9 @@ val step_round : t -> int -> int -> t
 
 (** [get_advice s] gives a string of advice to the player based on [s]. *)
 val get_advice : t -> string
+
+(** [test_state d] makes a state with a deck input [d], for testing.*)
+val test_state : Deck.deck -> t
+
+(** [update_money m] updates the stats.json file with new money value [m]. *)
+val update_money : int -> int

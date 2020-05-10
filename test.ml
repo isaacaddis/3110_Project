@@ -13,10 +13,12 @@ open Controller
     read/write information to/from a JSON. To test everything else in this, 
     we wrote general cases and edge cases for methods. *)
 
+(** [eq_test n a b] is a test with name [n] that checks [a] equals [b]. *)
 let eq_test name a b = (name >:: fun _ -> assert_equal a b)
 
 (** [ex_test name func a b] is a test that checks that [func b] raises [a]*)
-let ex_test name func a b = (name >:: fun _ -> assert_raises a (fun () -> func b))
+let ex_test name func a b = (name >:: fun _ -> assert_raises a 
+  (fun () -> func b))
 
 let card_tests = [
   eq_test "to_string jack" (make_card 10 1 |> to_string) "J of Diamonds";
@@ -65,6 +67,7 @@ let player_tests =
   ]
 
 let state_tests = 
+  let init_money = get_stats () in
   let st = init_state 500 in
   let p = player st in
   let d = dealer st in
@@ -81,6 +84,7 @@ let state_tests =
   let dloss = step_round st 6 250 in
   let dloss2 = step_round st 6 100 in
   let blackjack3 = step_round blackjack2 1 500 in
+  ignore (update_money init_money : int);
   [
     eq_test "Player who just starts in st with 500 in stats file has $500" 
       (money p) 500;

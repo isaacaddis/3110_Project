@@ -1,5 +1,7 @@
 open Player
 open State
+open Printf
+open Yojson.Basic.Util
 
 type pts = int
 type condition = Bust | Natural | Int of pts
@@ -94,3 +96,14 @@ let next_round s win bet = match win with
   | DWin -> step_round s 5 bet
   | DLoss -> step_round s 6 bet
   | Next -> step_round s 7 bet
+
+(** [get_stats ()] searches for the file 'stats.json' to get the money for
+    the player, and if it doesn't exist, it makes a file 'stats.json'. *)
+let get_stats () =
+  if Sys.file_exists "stats.json" then
+    (** read in data from stats *)
+    let file = Yojson.Basic.from_file "stats.json" in
+    file |> to_assoc |> List.assoc "money" |> to_int
+  else
+    let file = open_out "stats.json" in
+    fprintf file "%s\n" "{\n\t\"money\": 500\n}"; close_out file; 1000
