@@ -22,6 +22,14 @@ let construct_play_json (session_id: string) =
   session_id ^ 
   "\" }"
 
+(** has format : { 'action' : 'action' **)
+let construct_play_response (session_id: string) (action:string) : string = 
+  "{ \"session_id\" : \"" ^
+  session_id ^ 
+  "\", \"action\": \"" ^
+  action ^ 
+  "\" }"
+
 let login name bet =
   Client.post ~body:(Cohttp_lwt.Body.of_string (construct_login_json name bet))
     (Uri.of_string "http://localhost:8000/login") >>= fun (resp, body) ->
@@ -34,6 +42,14 @@ let play session_id =
   Client.post 
     ~body:(Cohttp_lwt.Body.of_string (construct_play_json (session_id)) )
     (Uri.of_string "http://localhost:8000/play") >>= fun (resp, body) ->
+  body |> Cohttp_lwt.Body.to_string >|= fun body ->
+  body
+
+let action (session_id: string) (action: string) =
+  Client.post 
+    ~body:
+      (Cohttp_lwt.Body.of_string (construct_play_response session_id action))
+    (Uri.of_string "http://localhost:8000/next") >>= fun (resp, body) ->
   body |> Cohttp_lwt.Body.to_string >|= fun body ->
   body
 
@@ -53,6 +69,17 @@ let parse_play_json (json_string:string) : (bool * string) =
   let status = json |> member "status" |> to_string in 
   (your_turn, status)
 
+let win_message = "You've beat the dealer" 
+
+let quit () =
+  exit 0
+
+let prompt_game_msg () : string =
+  print_endline "[stand]/[hit]/[quit]?";
+  match read_line () with
+  | "quit" -> print_endline "Leaving game."; quit ()
+  | x -> x
+
 let rec main session_id () = 
   minisleep 1.;
   let response = Lwt_main.run (play session_id) in
@@ -60,7 +87,16 @@ let rec main session_id () =
     match parse_play_json response with
     | exception Not_found -> print_endline "You cannot join a full lobby"
     | (false, _) -> print_endline "Game not started or it's not your turn"
-    | (true, status) -> print_endline status
+    | (true, status) ->
+        begin
+          match status with
+          | "next" -> 
+            let res = Lwt_main.run 
+              (action session_id (prompt_game_msg ()))
+            in
+            print_endline res
+          | x -> print_endline x; exit 0
+        end
   end;
   main session_id ()
 

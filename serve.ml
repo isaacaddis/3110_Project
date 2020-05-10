@@ -73,10 +73,38 @@ let construct_play_json (your_turn:bool) (status: string) =
   status ^
   "\" }"
 
+let replace_db session_id name bet st' =
+  let usrData' = 
+    { name = name;
+      bet = bet;
+      state = st' }
+  in
+  Hashtbl.replace !(db.connected_users) session_id usrData'
+
+let handle_next (tup:(string*string)) =
+  let (session_id, action) = tup in
+  try
+    let usrData = Hashtbl.find !(db.connected_users) (session_id) in
+    let dealer = !(db.dealer) in
+    let name = usrData.name in
+    let bet = usrData.bet in
+    let st = usrData.state in
+    let turn = !(db.turn) in
+    let turn_session_id = List.nth !(keys.session_ids) (turn) in
+    next_turn ();
+    if turn_session_id = session_id then
+        match Parser.parse action with
+        | Hit -> 
+            let st' = step st Hit in
+            replace_db session_id name bet st';
+            Printf.sprintf "Game state updated. Next turn."
+    else Printf.sprintf "Unauthorized access."
+  with Not_found -> Printf.sprintf "Unauthorized access."
+
 (** [handle_play s] handles the main game loop response for session_id [s]
     Requires: [s] is a session_id that is in [db]
     Effects: prints to console *)
-let handle_play ( session_id: string) = 
+let handle_play (session_id: string) = 
   try
     let state = Hashtbl.find !(db.connected_users) (session_id) in
     match state with
@@ -128,6 +156,11 @@ let parse_play_json (j: Yojson.Basic.t) : string =
   let session_id = j |> member "session_id" |> to_string in
   session_id
 
+let parse_next_json (j: Yojson.Basic.t) : (string * string) = 
+  let session_id = j |> member "session_id" |> to_string in
+  let action = j |> member "action" |> to_string in
+  (session_id, action)
+
 let handle_response (uri: string) (body_string : string) =  
     let db = !(db.connected_users) in
     let json = Yojson.Basic.from_string body_string in
@@ -141,11 +174,13 @@ let handle_response (uri: string) (body_string : string) =
             Printf.sprintf "%s" id
         | Failure -> Printf.sprintf "The table is full."
         end
-      else 
-      handle_play (parse_play_json json)
+      else
+        try
+          if contains uri "/play" then
+            handle_play (parse_play_json json)
+          else handle_next (parse_next_json json)
+        with Not_found -> handle_next (parse_next_json json)
     with Not_found -> handle_play (parse_play_json json)
-
-
 
 let server =
   let callback _conn req body =
