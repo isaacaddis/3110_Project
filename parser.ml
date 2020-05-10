@@ -1,4 +1,4 @@
-type commands = Stand | Hit | Quit | Double | Unknown
+type commands = Stand | Hit | Quit | Double | Advice | Unknown
 
 let parse str =
   match String.lowercase_ascii str with
@@ -6,4 +6,5 @@ let parse str =
   | "hit" -> Hit
   | "quit" -> Quit
   | "double down" -> Double
+  | "advice" -> Advice
   | _ -> Unknown

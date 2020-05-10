@@ -83,7 +83,6 @@ let step_round s win bet =
     dealer = (make_player (cards d') (dm s - money)); 
     player = (make_player (cards d'') (update_money (pm s + money))) }
 
-
 let dealer s =
   s.dealer
 
@@ -98,3 +97,20 @@ let test_state d =
     dealer = (make_player (cards d') 50000); 
     player = (make_player (cards d'') 50000); 
   }
+
+let get_advice s =
+  let player = s.player in
+  let dealer = s.dealer in
+  let d_top = top_card dealer in
+  let p_points = points player in
+  let d_points = get_val d_top in
+  if p_points = 11 && d_points <= 10 then
+    "I would advise you to double down, if this is your first pair. Otherwise" ^
+    " you should hit."
+  else if p_points <= 16 && p_points >= 12 && d_points <= 6 then
+    "I would advise you to stand."
+  else if (only_has_cards player 1 6) then
+    "I would advise you to double down, if you have the money. Otherwise " ^
+    "you should hit."
+  else if p_points <= 16 then "I would advise you to hit."
+  else "I would advise you to stand."

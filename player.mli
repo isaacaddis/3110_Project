@@ -14,7 +14,7 @@ val money : t -> int
 val hand : t -> Card.t list
 
 (** [top_card p] represents the top card that [p] has as a string. *)
-val top_card : t -> string
+val top_card : t -> Card.t
 
 (** [top_card p] represents a two-card hand with one hidden as ASCII art. *)
 val hand_as_facedown_string : t -> string
@@ -22,3 +22,5 @@ val hand_as_facedown_string : t -> string
 (** [hand_as_string p] represents the hand of [p] as ASCII art. *)
 val hand_as_string : t -> string
 
+(** [only_has_cards p v1 v2] checks if player [p] only has [v1] and [v2]. *)
+val only_has_cards : t -> int -> int -> bool
