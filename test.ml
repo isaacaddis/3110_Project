@@ -7,10 +7,11 @@ open Controller
 
 (** Test Plan: We tested all of the methods that were not based on direct inputs
     from the user. The methods that we play tested were in main.ml, deck.ml,
-    state.ml and card.ml, since drawing and playing isn't standardized and the
-    cards you draw would be different every time. We also manually tested the
-    methods that would read/write information to/from a JSON. To test everything
-    else in this, we wrote general cases and edge cases for methods. *)
+    state.ml and card.ml. To test the fuctions in controller.ml we created
+    two testing functions in deck.ml and state.ml that allow us to create non-
+    randomized states. We also manually tested the methods that would 
+    read/write information to/from a JSON. To test everything else in this, 
+    we wrote general cases and edge cases for methods. *)
 
 let eq_test name a b = (name >:: fun _ -> assert_equal a b)
 
