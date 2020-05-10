@@ -1,3 +1,10 @@
+(** 
+   Representation of card data.
+
+   This module represents the data stored in cards, including their values
+   and the conversions of cards to ascii strings.
+*)
+
 (** Abstract type representing a card *)
 type t
 

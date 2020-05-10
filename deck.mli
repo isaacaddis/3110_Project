@@ -1,3 +1,11 @@
+(** 
+   Representation of deck data.
+
+   This module represents the data stored in decks, including the cards drawn
+   and the cards that are remaining in the decks.
+*)
+
+
 (** Abstract type representing a deck. **)
 type deck
 

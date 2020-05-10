@@ -20,16 +20,38 @@ type db = { dealer: Player.t ref; turn: int ref; connected_users: v ref }
 
 let d = shuffle_deck ()
 let d' = draw_two_cards d
-let db = { dealer = ref (make_player (cards d') 50000); turn = ref 0; connected_users = ref connected_users}
+let db = { dealer = ref (make_player (cards d') 50000); turn = ref 0;
+  connected_users = ref connected_users}
 
 type keys = { session_ids: string list ref }
 let keys = { session_ids = ref [] }
 
+let connected = ref 0
+
+let connect_user () = 
+  connected := (!connected) + 1
+
+let disconnect_user () = 
+  connected := (!connected) - 1
+
 let next_turn () =
-  (db.turn) := (!(db.turn) + 1) mod 3
-(** [check_user_connected id] is [Some x] if [id] is connected *)
+  (db.turn) := (!(db.turn) + 1) mod (!connected)
+
+let next_turn_and_leave () =
+  let ids = !(keys.session_ids) in
+  let session_id = List.nth ids !(db.turn) in
+  disconnect_user ();
+  if !connected > 0 then
+    begin
+    next_turn ();
+    (keys.session_ids) := 
+      List.filter (fun e -> e != session_id) !(keys.session_ids)
+    end
+  else ()
+
+(* [check_user_connected id] is [Some x] if [id] is connected
 let check_user_connected tbl (session_id: string) : user_data option=
-  Hashtbl.find_opt tbl session_id
+  Hashtbl.find_opt tbl session_id *)
 
 (** [is_full t] is [false] when there are 2 players or less at the table [t],
     [true] otherwise. *)
@@ -38,6 +60,7 @@ let is_full tbl =
 
 (** [add_player s n] adds an entry to the database. *)
 let add_player (session_id: string) (bet: int) (name: string) tbl = 
+  connect_user ();
   Hashtbl.add tbl session_id { name = name; bet = bet; state = init_state bet};
   (session_id, tbl)
 
@@ -64,9 +87,10 @@ let check_start_condition tbl =
   if is_full tbl then Start else Wait (Hashtbl.length tbl)
 
 (** [construct_play_json t s] constructs a JSON string of the format
-    { 'your_turn': bool, 'status': 'status' }
+    [{ 'your_turn': bool, 'status': 'status' }]
     Requires: status is either "wait", "win", "tie", "loss", or "next" *)
 let construct_play_json (your_turn:bool) (status: string) name bet =
+  print_endline (string_of_int !connected);
   "{ \"your_turn\": " ^
   (string_of_bool your_turn) ^ 
   ", \"status\": \"" ^
@@ -86,13 +110,12 @@ let replace_db session_id name bet st' =
   in
   Hashtbl.replace !(db.connected_users) session_id usrData'
 
-(** [handle_next (session_id, action) runs the game action [action] for
+(** [handle_next (session_id, action)] runs the game action [action] for
     the user with session id [session_id], if it is their turn *)
 let handle_next (tup:(string*string)) =
   let (session_id, action) = tup in
   try
     let usrData = Hashtbl.find !(db.connected_users) (session_id) in
-    let dealer = !(db.dealer) in
     let name = usrData.name in
     let bet = usrData.bet in
     let st = usrData.state in
@@ -109,6 +132,7 @@ let handle_next (tup:(string*string)) =
             let st' = step st Stand in
             replace_db session_id name bet st';
             Printf.sprintf "Game state updated. Next turn."
+        | _ -> exit 0
     else Printf.sprintf "Unauthorized access."
   with Not_found -> Printf.sprintf "Unauthorized access."
 
@@ -133,24 +157,25 @@ let handle_play (session_id: string) =
               let status = check_st' true (player st) dealer in
               match status with
               | (Blackjack, _ ) -> 
-                  next_turn ();
+                  next_turn_and_leave ();
                   Printf.sprintf 
                     "%s" (construct_play_json true "win" name bet)
               | (Win, _ ) -> 
-                  next_turn ();
+                  next_turn_and_leave ();
                   Printf.sprintf 
                     "%s" (construct_play_json true "win" name bet)
               | (Loss, _ ) -> 
-                  next_turn ();
+                  next_turn_and_leave ();
                   Printf.sprintf 
                     "%s" (construct_play_json true "loss" name bet)
               | (Draw, _ ) -> 
-                  next_turn ();
+                  next_turn_and_leave ();
                   Printf.sprintf 
                     "%s" (construct_play_json true "tie" name bet)
               | (Next, Next) ->
                   Printf.sprintf 
                     "%s" (construct_play_json true "next" name bet)
+              | _ -> exit 0
               end
             else
               Printf.sprintf 

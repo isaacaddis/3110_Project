@@ -59,7 +59,7 @@ let check_st_d' (player: Player.t) (dealer: Player.t) =
   | Natural -> begin
       match d_cond with
       | Natural -> (Draw, Draw)
-      | Int y -> (DWin, Loss)
+      | Int _ -> (DWin, Loss)
       | Bust -> (DWin, Loss)
     end
   | Int x ->
@@ -90,7 +90,6 @@ let next_round s win bet = match win with
     the player, and if it doesn't exist, it makes a file 'stats.json'. *)
 let get_stats () =
   if Sys.file_exists "stats.json" then
-    (** read in data from stats *)
     let file = Yojson.Basic.from_file "stats.json" in
     file |> to_assoc |> List.assoc "money" |> to_int
   else

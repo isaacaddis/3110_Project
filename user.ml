@@ -22,7 +22,7 @@ let construct_play_json (session_id: string) =
   session_id ^ 
   "\" }"
 
-(** has format : { 'action' : 'action' **)
+(* has format : { 'action' : 'action' *)
 let construct_play_response (session_id: string) (action:string) : string = 
   "{ \"session_id\" : \"" ^
   session_id ^ 
@@ -41,7 +41,7 @@ let login name bet =
 let play session_id =
   Client.post 
     ~body:(Cohttp_lwt.Body.of_string (construct_play_json (session_id)) )
-    (Uri.of_string "http://localhost:8000/play") >>= fun (resp, body) ->
+    (Uri.of_string "http://localhost:8000/play") >>= fun (_, body) ->
   body |> Cohttp_lwt.Body.to_string >|= fun body ->
   body
 
@@ -49,18 +49,18 @@ let action (session_id: string) (action: string) =
   Client.post 
     ~body:
       (Cohttp_lwt.Body.of_string (construct_play_response session_id action))
-    (Uri.of_string "http://localhost:8000/next") >>= fun (resp, body) ->
+    (Uri.of_string "http://localhost:8000/next") >>= fun (_, body) ->
   body |> Cohttp_lwt.Body.to_string >|= fun body ->
   body
 
 let minisleep (sec: float) =
   Unix.sleepf sec
 
-let contains s1 s2 = 
+(* let contains s1 s2 = 
   let re = Str.regexp_string s2
   in
     try if Str.search_forward re s1 0 > -1 then true else false
-    with Not_found -> false
+    with Not_found -> false *)
 
 let parse_play_json (json_string:string) : (bool * string * string * int) = 
   if json_string = "Unauthorized access." then raise Not_found else
@@ -71,7 +71,7 @@ let parse_play_json (json_string:string) : (bool * string * string * int) =
   let bet = json |> member "bet" |> to_int in 
   (your_turn, status, name, bet)
 
-let win_message = "You've beat the dealer" 
+(* let win_message = "You've beat the dealer"  *)
 
 let quit () =
   exit 0
@@ -100,6 +100,7 @@ let rec main session_id () =
           | "win" -> print_endline (name ^ " won!"); exit 0
           | "loss" -> print_endline (name ^ " lost."); exit 0
           | "tie" -> print_endline "A draw!"; exit 0
+          | _ -> print_endline "Error in user.ml."; exit 0
         end
   end;
   main session_id ()
