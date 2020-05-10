@@ -48,8 +48,8 @@ let check_st' p_turn (player: Player.t) (dealer: Player.t) =
       end
     else if d_cond = Natural then
       (print_endline ""; print_endline "Dealer has a blackjack!";
-       print_endline ("Your hand: " ^ hand_as_string player);
-       print_endline ("Dealer's hand: " ^ hand_as_string dealer);
+       print_endline ("Your hand:\n" ^ hand_as_string player);
+       print_endline ("Dealer's hand:\n" ^ hand_as_string dealer);
        (Loss, Win))
     else (Next, Next)
 

@@ -207,4 +207,4 @@ let suite =
     controller_tests;
   ]
 
-let _ = run_test_tt_main suite
+let () = run_test_tt_main suite
