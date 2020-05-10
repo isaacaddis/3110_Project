@@ -38,10 +38,10 @@ let player_tests =
     eq_test "Player2 money $1000 equals $1000" (money player2) 1000;
     eq_test "Player1 hand equals its card list" (hand player) cards;
     eq_test "Player2 hand equals its card list" (hand player2) cards2;
-    eq_test "Player1 top card equals its first card string" (top_card player) 
-      (to_string (make_card 1 1));
-    eq_test "Player2 top card equals its first card string" (top_card player2) 
-      (to_string (make_card 5 3));
+    eq_test "Player1 top card equals its first card string" 
+      (to_string (top_card player)) (to_string (make_card 1 1));
+    eq_test "Player2 top card equals its first card string"
+      (to_string (top_card player2)) (to_string (make_card 5 3));
     eq_test "Player with 5 and king have points of 15" (points player2) 15;
     eq_test "Player with two aces and nine have 21 points" (points player) 21;
     eq_test "Player with three aces and a nine have 12 points" 
