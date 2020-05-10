@@ -25,8 +25,29 @@ let db = { dealer = ref (make_player (cards d') 50000); turn = ref 0; connected_
 type keys = { session_ids: string list ref }
 let keys = { session_ids = ref [] }
 
+let connected = ref 0
+
+let connect_user () = 
+  connected := (!connected) + 1
+
+let disconnect_user () = 
+  connected := (!connected) - 1
+
 let next_turn () =
-  (db.turn) := (!(db.turn) + 1) mod 3
+  (db.turn) := (!(db.turn) + 1) mod (!connected)
+
+let next_turn_and_leave () =
+  let ids = !(keys.session_ids) in
+  let session_id = List.nth ids !(db.turn) in
+  disconnect_user ();
+  if !connected > 0 then
+    begin
+    next_turn ();
+    (keys.session_ids) := 
+      List.filter (fun e -> e != session_id) !(keys.session_ids)
+    end
+  else ()
+
 (** [check_user_connected id] is [Some x] if [id] is connected *)
 let check_user_connected tbl (session_id: string) : user_data option=
   Hashtbl.find_opt tbl session_id
@@ -38,6 +59,7 @@ let is_full tbl =
 
 (** [add_player s n] adds an entry to the database. *)
 let add_player (session_id: string) (bet: int) (name: string) tbl = 
+  connect_user ();
   Hashtbl.add tbl session_id { name = name; bet = bet; state = init_state bet};
   (session_id, tbl)
 
@@ -67,6 +89,7 @@ let check_start_condition tbl =
     { 'your_turn': bool, 'status': 'status' }
     Requires: status is either "wait", "win", "tie", "loss", or "next" *)
 let construct_play_json (your_turn:bool) (status: string) name bet =
+  print_endline (string_of_int !connected);
   "{ \"your_turn\": " ^
   (string_of_bool your_turn) ^ 
   ", \"status\": \"" ^
@@ -133,19 +156,19 @@ let handle_play (session_id: string) =
               let status = check_st' true (player st) dealer in
               match status with
               | (Blackjack, _ ) -> 
-                  next_turn ();
+                  next_turn_and_leave ();
                   Printf.sprintf 
                     "%s" (construct_play_json true "win" name bet)
               | (Win, _ ) -> 
-                  next_turn ();
+                  next_turn_and_leave ();
                   Printf.sprintf 
                     "%s" (construct_play_json true "win" name bet)
               | (Loss, _ ) -> 
-                  next_turn ();
+                  next_turn_and_leave ();
                   Printf.sprintf 
                     "%s" (construct_play_json true "loss" name bet)
               | (Draw, _ ) -> 
-                  next_turn ();
+                  next_turn_and_leave ();
                   Printf.sprintf 
                     "%s" (construct_play_json true "tie" name bet)
               | (Next, Next) ->
