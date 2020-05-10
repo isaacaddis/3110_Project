@@ -15,7 +15,10 @@ let connected_users : v = Hashtbl.create 3
 type db = { turn: int ref; connected_users: v ref }
 let db = { turn = ref 0; connected_users = ref connected_users};;
 
-let next_turn =
+type keys = { session_ids: string list ref }
+let keys = { session_ids = ref [] }
+
+let next_turn () =
   (db.turn) := (!(db.turn) + 1) mod 3
 (** [check_user_connected id] is [Some x] if [id] is connected *)
 let check_user_connected tbl (session_id: string) : user_data option=
@@ -65,7 +68,15 @@ let handle_play ( session_id: string) =
           let bet = res.bet in
           let state  = res.state in
           match check_start_condition !(db.connected_users) with
-          | Start -> Printf.sprintf "Game running."
+          | Start ->
+            let turn = !(db.turn) in
+            let turn_session_id = List.nth !(keys.session_ids) (turn) in
+            if turn_session_id = session_id then
+              begin
+              Printf.sprintf "Your turn: %s" name
+              end
+            else
+              Printf.sprintf "Awaiting turn: %s" turn_session_id
           | Wait n -> 
             Printf.sprintf "Need 3 players to start game. (%d/3 connected)\n" n
   with Not_found -> Printf.sprintf "Unauthorized access."
@@ -89,6 +100,7 @@ let handle_response (uri: string) (body_string : string) =
         let (name, bet) = parse_login_json json in
         match add_user db name bet with
         | Success (id,tbl) ->
+            (keys.session_ids) := (id :: !(keys.session_ids));
             Printf.sprintf "%s" id
         | Failure -> Printf.sprintf "The table is full."
         end

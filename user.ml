@@ -33,18 +33,28 @@ let play session_id =
   Client.post 
     ~body:(Cohttp_lwt.Body.of_string (construct_play_json (session_id)) )
     (Uri.of_string "http://localhost:8000/play") >>= fun (resp, body) ->
-  let code = resp |> Response.status |> Code.code_of_status in
-  Printf.printf "\nResponse code (play): %d\n" code;
   body |> Cohttp_lwt.Body.to_string >|= fun body ->
   body
 
 let minisleep (sec: float) =
   Unix.sleepf sec
 
+let contains s1 s2 = 
+  let re = Str.regexp_string s2
+  in
+    try if Str.search_forward re s1 0 > -1 then true else false
+    with Not_found -> false
+
 let rec main session_id () = 
   minisleep 1.;
   let response = Lwt_main.run (play session_id) in
-  print_endline ("Received response\n" ^ response);
+  begin
+  match contains response "Your turn:" with
+  | true -> 
+      print_endline "stand|hit"
+  | false ->
+      print_endline response
+  end;
   main session_id ()
 
 let () =
