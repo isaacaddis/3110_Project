@@ -31,7 +31,7 @@ let hand p =
 let top_card p =
   let hand = hand p in
   match hand with
-  | h::t -> h
+  | h::_ -> h
   | _ -> failwith "Tried to get top card of player with empty hand"
 
 let hand_as_facedown_string p =
