@@ -3,6 +3,7 @@ open Card
 open Deck
 open Player
 open State
+open Controller
 
 (** Test Plan: We tested all of the methods that were not based on direct inputs
     from the user. The methods that we play tested were in main.ml, deck.ml,
@@ -137,12 +138,72 @@ let state_tests =
              "$750 again, has $48500") (money (dealer blackjack3)) 48500;
   ]
 
+let controller_tests = 
+  let make_tstate c = test_state (test_deck c) in
+
+  let double_nat = make_tstate [(1, 1); (12, 1); (1, 2); (12, 2)] in 
+  let dealer_nat = make_tstate [(1, 1); (12, 1); (5, 2); (8, 2)] in
+  let p_nat = make_tstate [(1, 1); (1, 2); (1, 3); (10, 2)] in
+
+  let double_21 = 
+    make_tstate [(5, 1); (6, 1); (5, 2); (6, 2); (10, 1); (10, 2)] in
+  let d21 = step double_21 Hit in
+
+  let p_bust' = [(2, 1); (3, 1); (10, 1); (5, 1); (10, 2)] |> make_tstate
+                |> step in let p_bust = p_bust' Hit in
+
+  let d_bust' = [(6, 1); (6, 2); (5, 1); (5, 2); (10, 1); (10, 2)] 
+                |> make_tstate |> step in let d_bust = d_bust' Stand in 
+
+  let p_win_stand = make_tstate[(10, 1); (7, 1); (10, 2); (10, 2)] in 
+  let p_loss_stand = make_tstate[(10, 1); (7, 1); (10, 2); (16, 2)] in
+
+  let p_win_hs'' = [(10, 1); (5, 1); (10, 2); (4, 2); (2, 1); (3, 1); (2, 2)] 
+                   |> make_tstate 
+                   |> step in let p_win_hs' = step (p_win_hs'' Hit) Hit |> step in 
+  let p_win_hs = p_win_hs' Stand in
+  let p_loss_hs = step (p_win_hs'' Hit) Stand in
+
+  let incomp = p_win_hs'' Hit in 
+
+  let dd_win = d_bust' Double in 
+  let dd_loss = 
+    step (make_tstate [(10, 1); (10, 2); (5, 2); (6, 1); (5, 1)]) Double in
+  let dd_draw = 
+    step (make_tstate [(10, 1); (7, 1); (5, 2); (6, 2); (6, 1)]) Double in
+  [
+    eq_test "Double blackjack is a draw" (check_st true double_nat) (Draw, Draw);
+    eq_test "Dealer natural is a loss" (check_st true dealer_nat) (Loss, Win);
+    eq_test "Player blackjack" (check_st true p_nat) (Blackjack, Loss);
+    eq_test "Both hit into 21 is a draw" (check_st false d21) (Draw, Draw);
+    eq_test "Player loses upon bust" (check_st false p_bust) (Loss, Win);
+    eq_test "Player wins upon dealer bust" (check_st false d_bust) (Win, Loss);
+    eq_test "Player has larger total, neither draws"
+      (check_st false p_win_stand) (Win, Loss);
+    eq_test "Player has lower total, neither draws"
+      (check_st false p_loss_stand) (Loss, Win);
+    eq_test "Player has higher total, both draw"
+      (check_st false p_win_hs) (Win, Loss);
+    eq_test "Player has lower total, both draw"
+      (check_st false p_loss_hs) (Loss, Win);
+    eq_test "Dealer hasn't drawn" (check_st false incomp) (Next, Next);
+
+    eq_test "Player wins in double down when dealer busts" 
+      (check_st_d dd_win) (DWin, Loss);
+    eq_test "Player loses in double down, dealer doesn't draw"
+      (check_st_d dd_loss) (DLoss, Win);
+    eq_test "Player ties in double down, dealer doesn't draw"
+      (check_st_d dd_draw) (Draw, Draw);
+
+  ]
+
 let suite =  
   "test suite for blackjack" >::: List.flatten [
     card_tests;
     deck_tests;
     player_tests;
     state_tests;
+    controller_tests;
   ]
 
 let _ = run_test_tt_main suite
