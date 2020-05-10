@@ -99,19 +99,18 @@ let rec game_loop bet p_turn st =
             let st' = step st Double in game_double st'
           else
           if bet * 2 > p_money then
-            (print_endline ("You cannot double down if you do not have more" ^ 
-                            " than double your bet money. "^
-                            "Please select a different option.");
-             game_loop bet p_turn st)
+            (print_endline ("You cannot double down if you do not have more" ^
+              " than double your bet money. Please select a different option.");
+            game_loop bet p_turn st)
           else if (st |> can_double |> not) then
-            (print_endline ("You cannot double down if your hand's value "^
-                            "is not 9, 10, or 11, or if you have hit. " ^
-                            "Please select a different option.");
+            (print_endline ("You cannot double down if your hand's value " ^
+              "is not 9, 10, or 11, or if you have hit. " ^ 
+              "Please select a different option.");
              game_loop bet p_turn st)
           else
             (print_endline ("Cannot double down if dealer does not have " ^ 
-                            "more than double the bet money. " ^ 
-                            "Please select a different option.");
+              "more than double the bet money. Please select a different " ^ 
+              "option.");
              game_loop bet p_turn st)
         | Advice -> print_endline (get_advice st); game_loop bet p_turn st
         | Unknown -> 

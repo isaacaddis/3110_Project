@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Player.html">
+<link rel="next" href="Main.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Card" rel="Chapter" href="Card.html">
+<link title="Deck" rel="Chapter" href="Deck.html">
+<link title="Player" rel="Chapter" href="Player.html">
+<link title="State" rel="Chapter" href="State.html">
+<link title="Main" rel="Chapter" href="Main.html">
+<link title="Serve" rel="Chapter" href="Serve.html">
+<link title="User" rel="Chapter" href="User.html"><title>State</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Player.html" title="Player">Previous</a>
+&nbsp;<a class="up" href="index.html" title="Index">Up</a>
+&nbsp;<a class="post" href="Main.html" title="Main">Next</a>
+</div>
+<h1>Module <a href="type_State.html">State</a></h1>
+
+<pre><span id="MODULEState"><span class="keyword">module</span> State</span>: <code class="code">sig</code> <a href="State.html">..</a> <code class="code">end</code></pre><div class="info module top">
+<div class="info-desc">
+<p>Representation of state data.</p>
+
+<p>This module represents the data stored in a state, which includes
+   the player and the dealer, both of which have type Player.t. It is
+   responsible for stepping and updating money for player as well.</p>
+</div>
+</div>
+<hr width="100%">
+
+<pre><code><span id="TYPEt"><span class="keyword">type</span> <code class="type"></code>t</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.deck">deck</span>&nbsp;: <code class="type"><a href="Deck.html#TYPEdeck">Deck.deck</a></code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.dealer">dealer</span>&nbsp;: <code class="type"><a href="Player.html#TYPEt">Player.t</a></code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.player">player</span>&nbsp;: <code class="type"><a href="Player.html#TYPEt">Player.t</a></code>;</code></td>
+
+</tr></table>
+}
+
+<div class="info ">
+<div class="info-desc">
+<p>Abstract value type of state.</p>
+</div>
+</div>
+
+
+<pre><span id="VALinit_state"><span class="keyword">val</span> init_state</span> : <code class="type">int -> <a href="State.html#TYPEt">t</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">init_state n</code> is the starting state of a round of black jack,
+    where the dealer and the player have two cards each</p>
+</div>
+</div>
+
+<pre><span id="VALpm"><span class="keyword">val</span> pm</span> : <code class="type"><a href="State.html#TYPEt">t</a> -> int</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">pm s</code> is the player's money in state <code class="code">s</code></p>
+</div>
+</div>
+
+<pre><span id="VALdm"><span class="keyword">val</span> dm</span> : <code class="type"><a href="State.html#TYPEt">t</a> -> int</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">dm s</code> is the dealer's money in state <code class="code">s</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALpause"><span class="keyword">val</span> pause</span> : <code class="type">int -> unit</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">pause s</code> pauses, prints a period, and decrements <code class="code">s</code> until it is 0.</p>
+</div>
+</div>
+
+<pre><span id="VALdealer_draw"><span class="keyword">val</span> dealer_draw</span> : <code class="type"><a href="State.html#TYPEt">t</a> -> <a href="State.html#TYPEt">t</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">dealer_draw s</code> is the state <code class="code">s</code> becomes after the dealer draws a card.</p>
+</div>
+</div>
+
+<pre><span id="VALstep"><span class="keyword">val</span> step</span> : <code class="type"><a href="State.html#TYPEt">t</a> -> Parser.commands -> <a href="State.html#TYPEt">t</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">step s cmd</code> is the result of player choice <code class="code">cmd</code> while in state <code class="code">s</code></p>
+</div>
+</div>
+
+<pre><span id="VALx1_5"><span class="keyword">val</span> x1_5</span> : <code class="type">int -> int</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">x1_5 n</code> multiplies int <code class="code">n</code> by 1.5, then reconverts to int.</p>
+</div>
+</div>
+
+<pre><span id="VALupdate_money"><span class="keyword">val</span> update_money</span> : <code class="type">int -> int</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">update_money m</code> updates the stats.json file with new money value <code class="code">m</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALcalc_money"><span class="keyword">val</span> calc_money</span> : <code class="type">int -> int -> int</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">calc_money w b</code> calculates how much the player wins or loses based on
+    bet <code class="code">b</code> and condition <code class="code">w</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALstep_round"><span class="keyword">val</span> step_round</span> : <code class="type"><a href="State.html#TYPEt">t</a> -> int -> int -> <a href="State.html#TYPEt">t</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">step_round s win bet</code> is a fresh round of blackjack, with the player's
+    money updated according to the result <code class="code">win</code> and wager <code class="code">bet</code>.
+    These are what the possible values of <code class="code">win</code> correspond to:
+    1: Blackjack victory,
+    2: Normal Victory,
+    3: Loss,
+    4: Draw,
+    5: Double down victory,
+    6: Double down loss,
+    Other: Causes a failure</p>
+</div>
+</div>
+
+<pre><span id="VALdealer"><span class="keyword">val</span> dealer</span> : <code class="type"><a href="State.html#TYPEt">t</a> -> <a href="Player.html#TYPEt">Player.t</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">dealer t</code> returns the dealer from state <code class="code">t</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALplayer"><span class="keyword">val</span> player</span> : <code class="type"><a href="State.html#TYPEt">t</a> -> <a href="Player.html#TYPEt">Player.t</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">player t</code> returns the player from state <code class="code">t</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALtest_state"><span class="keyword">val</span> test_state</span> : <code class="type"><a href="Deck.html#TYPEdeck">Deck.deck</a> -> <a href="State.html#TYPEt">t</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">test_state d</code> makes a state with a deck input <code class="code">d</code>, for testing.</p>
+</div>
+</div>
+
+<pre><span id="VALget_advice"><span class="keyword">val</span> get_advice</span> : <code class="type"><a href="State.html#TYPEt">t</a> -> string</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_advice s</code> gives a string of advice to the player based on <code class="code">s</code>.</p>
+</div>
+</div>
+</body></html>

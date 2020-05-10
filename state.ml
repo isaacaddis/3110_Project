@@ -33,7 +33,7 @@ let dealer_draw s =
   if d_points >= 17 then s else
     let r = draw_card d in
     {deck = (deck r); dealer = (make_player (List.append (hand s.dealer)
-                                               (cards r)) (dm s)); player = s.player}
+      (cards r)) (dm s)); player = s.player}
 
 let step s cmd = 
   let d = s.deck in
@@ -42,14 +42,14 @@ let step s cmd =
   | Hit ->
     let new_s = { deck = (deck r); dealer = s.dealer; 
                   player = make_player (List.append (hand s.player) (cards r)) 
-                      (money s.player) } in
+                    (money s.player) } in
     if points new_s.player = 21 then dealer_draw new_s
     else new_s
   | Stand -> dealer_draw s
   | Double -> 
     dealer_draw { deck = (deck r); dealer = s.dealer; 
                   player = make_player (List.append (hand s.player) (cards r))
-                      (money s.player) }
+                    (money s.player) }
   | Quit -> failwith "unimplemented"
   | _ -> failwith "unimplemented"
 
