@@ -22,7 +22,7 @@ let construct_play_json (session_id: string) =
   session_id ^ 
   "\" }"
 
-(** has format : { 'action' : 'action' **)
+(* has format : { 'action' : 'action' *)
 let construct_play_response (session_id: string) (action:string) : string = 
   "{ \"session_id\" : \"" ^
   session_id ^ 

@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Card.html">
+<link rel="next" href="Player.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Card" rel="Chapter" href="Card.html">
+<link title="Deck" rel="Chapter" href="Deck.html">
+<link title="Player" rel="Chapter" href="Player.html">
+<link title="State" rel="Chapter" href="State.html">
+<link title="Main" rel="Chapter" href="Main.html">
+<link title="Serve" rel="Chapter" href="Serve.html">
+<link title="User" rel="Chapter" href="User.html"><title>Deck</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Card.html" title="Card">Previous</a>
+&nbsp;<a class="up" href="index.html" title="Index">Up</a>
+&nbsp;<a class="post" href="Player.html" title="Player">Next</a>
+</div>
+<h1>Module <a href="type_Deck.html">Deck</a></h1>
+
+<pre><span id="MODULEDeck"><span class="keyword">module</span> Deck</span>: <code class="code">sig</code> <a href="Deck.html">..</a> <code class="code">end</code></pre><div class="info module top">
+<div class="info-desc">
+<p>Abstract type representing a deck. *</p>
+</div>
+</div>
+<hr width="100%">
+
+<pre><span id="TYPEdeck"><span class="keyword">type</span> <code class="type"></code>deck</span> = <code class="type"><a href="Card.html#TYPEt">Card.t</a> list</code> </pre>
+
+
+<pre><code><span id="TYPEres"><span class="keyword">type</span> <code class="type"></code>res</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTres.cards">cards</span>&nbsp;: <code class="type"><a href="Card.html#TYPEt">Card.t</a> list</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTres.deck">deck</span>&nbsp;: <code class="type"><a href="Deck.html#TYPEdeck">deck</a></code>;</code></td>
+
+</tr></table>
+}
+
+<div class="info ">
+<div class="info-desc">
+<p>Abstract type representing cards drawn from deck and remaining cards
+    left in the deck.</p>
+</div>
+</div>
+
+
+<pre><span id="VALcards"><span class="keyword">val</span> cards</span> : <code class="type"><a href="Deck.html#TYPEres">res</a> -> <a href="Card.html#TYPEt">Card.t</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">cards res</code> returns the cards drawn in <code class="code">res</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALcards_to_string"><span class="keyword">val</span> cards_to_string</span> : <code class="type"><a href="Deck.html#TYPEres">res</a> -> string list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">cards_to_string r</code> returns a string list of the cards drawn in <code class="code">r</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALdeck"><span class="keyword">val</span> deck</span> : <code class="type"><a href="Deck.html#TYPEres">res</a> -> <a href="Deck.html#TYPEdeck">deck</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">deck r</code> returns the deck remaining from result <code class="code">res</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALmatch_suit"><span class="keyword">val</span> match_suit</span> : <code class="type">int -> int</code></pre><div class="info ">
+<div class="info-desc">
+<p>Requires: n is in <code class="code">0..51</code> *</p>
+</div>
+</div>
+
+<pre><span id="VALshuffle_deck"><span class="keyword">val</span> shuffle_deck</span> : <code class="type">unit -> <a href="Card.html#TYPEt">Card.t</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">shuffle_deck d</code> is a full 52-card shuffled deck.</p>
+</div>
+</div>
+
+<pre><span id="VALdraw_card"><span class="keyword">val</span> draw_card</span> : <code class="type"><a href="Card.html#TYPEt">Card.t</a> list -> <a href="Deck.html#TYPEres">res</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">draw_card d</code> returns a result of a card drawn from <code class="code">d</code> and the cards
+    left in the deck afterwards.</p>
+</div>
+</div>
+
+<pre><span id="VALdraw_two_cards"><span class="keyword">val</span> draw_two_cards</span> : <code class="type"><a href="Card.html#TYPEt">Card.t</a> list -> <a href="Deck.html#TYPEres">res</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">draw_two_cards d</code> returns a result containing the two cards drawn, and
+    the remaining cards in a separate deck.</p>
+</div>
+</div>
+
+<pre><span id="VALtest_deck"><span class="keyword">val</span> test_deck</span> : <code class="type">(int * int) list -> <a href="Card.html#TYPEt">Card.t</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">test_deck c</code> creates a non-randomized deck based off the int in pairs <code class="code">c</code>
+    representing individual cards</p>
+</div>
+</div>
+</body></html>

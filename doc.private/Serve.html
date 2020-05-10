@@ -1,0 +1,216 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Main.html">
+<link rel="next" href="User.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Card" rel="Chapter" href="Card.html">
+<link title="Deck" rel="Chapter" href="Deck.html">
+<link title="Player" rel="Chapter" href="Player.html">
+<link title="State" rel="Chapter" href="State.html">
+<link title="Main" rel="Chapter" href="Main.html">
+<link title="Serve" rel="Chapter" href="Serve.html">
+<link title="User" rel="Chapter" href="User.html"><title>Serve</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Main.html" title="Main">Previous</a>
+&nbsp;<a class="up" href="index.html" title="Index">Up</a>
+&nbsp;<a class="post" href="User.html" title="User">Next</a>
+</div>
+<h1>Module <a href="type_Serve.html">Serve</a></h1>
+
+<pre><span id="MODULEServe"><span class="keyword">module</span> Serve</span>: <code class="code">sig</code> <a href="Serve.html">..</a> <code class="code">end</code></pre><div class="info module top">
+<div class="info-desc">
+<p>The main entry point for the server interface.</p>
+</div>
+</div>
+<hr width="100%">
+
+<pre><code><span id="TYPEuser_data"><span class="keyword">type</span> <code class="type"></code>user_data</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTuser_data.name">name</span>&nbsp;: <code class="type">string</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTuser_data.bet">bet</span>&nbsp;: <code class="type">int</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTuser_data.state">state</span>&nbsp;: <code class="type"><a href="State.html#TYPEt">State.t</a></code>;</code></td>
+
+</tr></table>
+}
+
+
+
+<pre><span id="TYPEv"><span class="keyword">type</span> <code class="type"></code>v</span> = <code class="type">(string, <a href="Serve.html#TYPEuser_data">user_data</a>) Stdlib.Hashtbl.t</code> </pre>
+
+
+<pre><span id="VALconnected_users"><span class="keyword">val</span> connected_users</span> : <code class="type"><a href="Serve.html#TYPEv">v</a></code></pre>
+<pre><code><span id="TYPEdb"><span class="keyword">type</span> <code class="type"></code>db</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTdb.dealer">dealer</span>&nbsp;: <code class="type"><a href="Player.html#TYPEt">Player.t</a> Stdlib.ref</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTdb.turn">turn</span>&nbsp;: <code class="type">int Stdlib.ref</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTdb.connected_users">connected_users</span>&nbsp;: <code class="type"><a href="Serve.html#TYPEv">v</a> Stdlib.ref</code>;</code></td>
+
+</tr></table>
+}
+
+
+
+<pre><span id="VALd"><span class="keyword">val</span> d</span> : <code class="type"><a href="Deck.html#TYPEdeck">Deck.deck</a></code></pre>
+<pre><span id="VALd'"><span class="keyword">val</span> d'</span> : <code class="type"><a href="Deck.html#TYPEres">Deck.res</a></code></pre>
+<pre><span id="VALdb"><span class="keyword">val</span> db</span> : <code class="type"><a href="Serve.html#TYPEdb">db</a></code></pre>
+<pre><code><span id="TYPEkeys"><span class="keyword">type</span> <code class="type"></code>keys</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTkeys.session_ids">session_ids</span>&nbsp;: <code class="type">string list Stdlib.ref</code>;</code></td>
+
+</tr></table>
+}
+
+
+
+<pre><span id="VALkeys"><span class="keyword">val</span> keys</span> : <code class="type"><a href="Serve.html#TYPEkeys">keys</a></code></pre>
+<pre><span id="VALconnected"><span class="keyword">val</span> connected</span> : <code class="type">int Stdlib.ref</code></pre>
+<pre><span id="VALconnect_user"><span class="keyword">val</span> connect_user</span> : <code class="type">unit -> unit</code></pre>
+<pre><span id="VALdisconnect_user"><span class="keyword">val</span> disconnect_user</span> : <code class="type">unit -> unit</code></pre>
+<pre><span id="VALnext_turn"><span class="keyword">val</span> next_turn</span> : <code class="type">unit -> unit</code></pre>
+<pre><span id="VALnext_turn_and_leave"><span class="keyword">val</span> next_turn_and_leave</span> : <code class="type">unit -> unit</code></pre>
+<pre><span id="VALcheck_user_connected"><span class="keyword">val</span> check_user_connected</span> : <code class="type">(string, <a href="Serve.html#TYPEuser_data">user_data</a>) Stdlib.Hashtbl.t -><br>       string -> <a href="Serve.html#TYPEuser_data">user_data</a> option</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">check_user_connected id</code> is <code class="code">Some x</code> if <code class="code">id</code> is connected</p>
+</div>
+</div>
+
+<pre><span id="VALis_full"><span class="keyword">val</span> is_full</span> : <code class="type">('a, 'b) Stdlib.Hashtbl.t -> bool</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">is_full t</code> is <code class="code">false</code> when there are 2 players or less at the table <code class="code">t</code>,
+    <code class="code">true</code> otherwise.</p>
+</div>
+</div>
+
+<pre><span id="VALadd_player"><span class="keyword">val</span> add_player</span> : <code class="type">string -><br>       int -><br>       string -><br>       (string, <a href="Serve.html#TYPEuser_data">user_data</a>) Stdlib.Hashtbl.t -><br>       string * (string, <a href="Serve.html#TYPEuser_data">user_data</a>) Stdlib.Hashtbl.t</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">add_player s n</code> adds an entry to the database.</p>
+</div>
+</div>
+
+<pre><code><span id="TYPEstatus"><span class="keyword">type</span> <code class="type"></code>status</span> = </code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTstatus.Success"><span class="constructor">Success</span></span> <span class="keyword">of</span> <code class="type">(string * (string, <a href="Serve.html#TYPEuser_data">user_data</a>) Stdlib.Hashtbl.t)</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTstatus.Failure"><span class="constructor">Failure</span></span></code></td>
+
+</tr></table>
+
+
+
+<pre><span id="VALadd_user"><span class="keyword">val</span> add_user</span> : <code class="type">(string, <a href="Serve.html#TYPEuser_data">user_data</a>) Stdlib.Hashtbl.t -> string -> int -> <a href="Serve.html#TYPEstatus">status</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">add_user t n</code> is a dictionary <code class="code">d</code> of player <code class="code">n</code> in table <code class="code">t</code></p>
+</div>
+</div>
+
+<pre><span id="VALcontains"><span class="keyword">val</span> contains</span> : <code class="type">string -> string -> bool</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">contains s1 s2</code> is <code class="code">true</code> when s2 is a substring of s1, 
+    <code class="code">false</code> otherwise.
+    Requires: <code class="code">s2.length</code> &lt;= <code class="code">s1.length</code></p>
+</div>
+</div>
+
+<pre><code><span id="TYPEstart_conditions"><span class="keyword">type</span> <code class="type"></code>start_conditions</span> = </code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTstart_conditions.Start"><span class="constructor">Start</span></span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTstart_conditions.Wait"><span class="constructor">Wait</span></span> <span class="keyword">of</span> <code class="type">int</code></code></td>
+
+</tr></table>
+
+
+
+<pre><span id="VALcheck_start_condition"><span class="keyword">val</span> check_start_condition</span> : <code class="type">('a, 'b) Stdlib.Hashtbl.t -> <a href="Serve.html#TYPEstart_conditions">start_conditions</a></code></pre>
+<pre><span id="VALconstruct_play_json"><span class="keyword">val</span> construct_play_json</span> : <code class="type">bool -> string -> string -> int -> string</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">construct_play_json t s</code> constructs a JSON string of the format
+    <code class="code">{ 'your_turn': bool, 'status': 'status' }</code>
+    Requires: status is either "wait", "win", "tie", "loss", or "next"</p>
+</div>
+</div>
+
+<pre><span id="VALreplace_db"><span class="keyword">val</span> replace_db</span> : <code class="type">string -> string -> int -> <a href="State.html#TYPEt">State.t</a> -> unit</code></pre><div class="info ">
+<div class="info-desc">
+<p>Effects: Updates the <code class="code">db</code> with new paramters</p>
+</div>
+</div>
+
+<pre><span id="VALhandle_next"><span class="keyword">val</span> handle_next</span> : <code class="type">string * string -> string</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">handle_next (session_id, action)</code> runs the game action <code class="code">action</code> for
+    the user with session id <code class="code">session_id</code>, if it is their turn</p>
+</div>
+</div>
+
+<pre><span id="VALhandle_play"><span class="keyword">val</span> handle_play</span> : <code class="type">string -> string</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">handle_play s</code> handles the main game loop response for session_id <code class="code">s</code>
+    Requires: <code class="code">s</code> is a session_id that is in <code class="code">db</code>
+    Effects: prints to console</p>
+</div>
+</div>
+
+<pre><span id="VALparse_login_json"><span class="keyword">val</span> parse_login_json</span> : <code class="type">Yojson.Basic.t -> string * int</code></pre>
+<pre><span id="VALparse_play_json"><span class="keyword">val</span> parse_play_json</span> : <code class="type">Yojson.Basic.t -> string</code></pre>
+<pre><span id="VALparse_next_json"><span class="keyword">val</span> parse_next_json</span> : <code class="type">Yojson.Basic.t -> string * string</code></pre>
+<pre><span id="VALhandle_response"><span class="keyword">val</span> handle_response</span> : <code class="type">string -> string -> string</code></pre>
+<pre><span id="VALserver"><span class="keyword">val</span> server</span> : <code class="type">unit Lwt.t</code></pre></body></html>

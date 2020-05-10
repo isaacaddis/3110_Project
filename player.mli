@@ -1,3 +1,10 @@
+(** 
+   Representation of player data.
+
+   This module represents the data stored in the player, including the money
+   he/she has, the point value of his/her hand, and the cards that he/she has.
+*)
+
 (** Abstract value type of player. *)
 type t
 

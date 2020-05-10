@@ -1,3 +1,11 @@
+(** 
+   Representation of state data.
+
+   This module represents the data stored in a state, which includes
+   the player and the dealer, both of which have type Player.t. It is
+   responsible for stepping and updating money for player as well.
+*)
+
 (** Abstract value type of state. *)
 type t
 

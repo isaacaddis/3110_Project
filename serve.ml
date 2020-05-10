@@ -87,7 +87,7 @@ let check_start_condition tbl =
   if is_full tbl then Start else Wait (Hashtbl.length tbl)
 
 (** [construct_play_json t s] constructs a JSON string of the format
-    { 'your_turn': bool, 'status': 'status' }
+    [{ 'your_turn': bool, 'status': 'status' }]
     Requires: status is either "wait", "win", "tie", "loss", or "next" *)
 let construct_play_json (your_turn:bool) (status: string) name bet =
   print_endline (string_of_int !connected);
@@ -110,7 +110,7 @@ let replace_db session_id name bet st' =
   in
   Hashtbl.replace !(db.connected_users) session_id usrData'
 
-(** [handle_next (session_id, action) runs the game action [action] for
+(** [handle_next (session_id, action)] runs the game action [action] for
     the user with session id [session_id], if it is their turn *)
 let handle_next (tup:(string*string)) =
   let (session_id, action) = tup in
