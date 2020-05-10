@@ -6,7 +6,7 @@ open State
 
 (** Test Plan: We tested all of the methods that were not based on direct inputs
     from the user. The methods that we play tested were in main.ml, deck.ml,
-    and state.ml, since drawing and playing isn't standardized and the
+    state.ml and card.ml, since drawing and playing isn't standardized and the
     cards you draw would be different every time. We also manually tested the
     methods that would read/write information to/from a JSON. To test everything
     else in this, we wrote general cases and edge cases for methods. *)

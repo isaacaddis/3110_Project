@@ -78,28 +78,30 @@ let rec game_loop bet p_turn st =
   | (Loss, _) -> print_endline "You lost!\n"; Loss
   | (Next, Next) ->
     begin
-      match Parser.parse (game_msg st ())  with
-      | Quit -> quit ()
-      | Hit -> let st' = step st Hit in game_loop bet true st'
-      | Stand -> let st' = step st Stand in game_loop bet false st'
-      | Double -> 
-        let p_money = st |> player |> money in
-        let d_money = st |> dealer |> money in
-        if bet * 2 <= p_money && bet * 2 <= d_money then
-          let st' = step st Double in game_double st'
-        else
-          if bet * 2 > p_money then
-            (print_endline ("You cannot double down if you do not have more " ^ 
-            "than double your bet money. Please select a different option.");
-            game_loop bet p_turn st)
+      if p_turn then
+        match Parser.parse (game_msg st ())  with
+        | Quit -> quit ()
+        | Hit -> let st' = step st Hit in game_loop bet true st'
+        | Stand -> let st' = step st Stand in game_loop bet false st'
+        | Double -> 
+          let p_money = st |> player |> money in
+          let d_money = st |> dealer |> money in
+          if bet * 2 <= p_money && bet * 2 <= d_money then
+            let st' = step st Double in game_double st'
           else
-            (print_endline ("Cannot double down if dealer does not have more " ^ 
-            "than double the bet money. Please select a different option.");
-            game_loop bet p_turn st)
-      | Unknown -> 
-        print_endline ("Unknown command. Please select a command from the " ^
-          "options above.");
-        game_loop bet p_turn st
+            if bet * 2 > p_money then
+              (print_endline ("You cannot double down if you do not have more " ^ 
+              "than double your bet money. Please select a different option.");
+              game_loop bet p_turn st)
+            else
+              (print_endline ("Cannot double down if dealer does not have more " ^ 
+              "than double the bet money. Please select a different option.");
+              game_loop bet p_turn st)
+        | Unknown -> 
+          print_endline ("Unknown command. Please select a command from the " ^
+            "options above.");
+          game_loop bet p_turn st
+        else let st' = step st Stand in game_loop bet false st'
     end
   | _ -> failwith "an unexpected error occured"
 
