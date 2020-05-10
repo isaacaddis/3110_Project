@@ -14,4 +14,5 @@ After running [make build], you can run [make test] to test the cases we have
 created for the projected in [test.ml], and you can run [make play] to play
 the Blackjack game we have created to play solo, or if you want to play
 using our server/client, you can run [make server] in one terminal, and run
-[make client] in three other terminals to play.
+[make client] in three other terminals to play. If you run out of money in
+single player, you can reset money to $500 using [make reset].
