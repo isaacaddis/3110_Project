@@ -20,7 +20,8 @@ type db = { dealer: Player.t ref; turn: int ref; connected_users: v ref }
 
 let d = shuffle_deck ()
 let d' = draw_two_cards d
-let db = { dealer = ref (make_player (cards d') 50000); turn = ref 0; connected_users = ref connected_users}
+let db = { dealer = ref (make_player (cards d') 50000); turn = ref 0;
+  connected_users = ref connected_users}
 
 type keys = { session_ids: string list ref }
 let keys = { session_ids = ref [] }
