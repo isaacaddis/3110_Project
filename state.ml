@@ -23,7 +23,7 @@ let dm s = s.dealer |> money
 (** [pause s] pauses, prints a period, and decrements [s] until it is 0. *)
 let rec pause t =
   if t <= 0 then print_endline ""
-  else (print_endline "."; Unix.sleep 1; pause (t-1))
+  else (print_endline "."; Unix.sleepf 0.6; pause (t-1))
 
 (** [dealer_draw s] is the state [s] becomes after the dealer draws a card. *)
 let dealer_draw s = 
@@ -62,9 +62,9 @@ let update_money money =
   let out_string = "{ \n\t\"money\":" ^ string_of_int money ^ "\n}" in
   fprintf file "%s\n" out_string; close_out file; money
 
-(** [calc_money s w b] calculates how much the player wins or loses based on
+(** [calc_money w b] calculates how much the player wins or loses based on
     bet [b] and condition [w]. *)
-let calc_money s win bet =
+let calc_money win bet =
   match win with
   | 1 -> x1_5 bet
   | 2  -> bet
@@ -78,7 +78,7 @@ let step_round s win bet =
   let d = shuffle_deck () in
   let d' = draw_two_cards d in
   let d'' = d' |> deck |> draw_two_cards  in
-  let money = calc_money s win bet in
+  let money = calc_money win bet in
   { deck = (deck d''); 
     dealer = (make_player (cards d') (dm s - money)); 
     player = (make_player (cards d'') (update_money (pm s + money))) }

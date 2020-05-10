@@ -26,9 +26,5 @@ val step : t -> Parser.commands -> t
     Other: Causes a failure*)
 val step_round : t -> int -> int -> t 
 
-(** [test_state d] is a non randomized state for testing purposes
-    created from deck [d]. *)
-val test_state : Deck.deck -> t
-
 (** [get_advice s] gives a string of advice to the player based on [s]. *)
 val get_advice : t -> string
