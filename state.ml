@@ -20,15 +20,20 @@ let pm s = s.player |> money
 (** [dm s] is the dealer's money in state [s]. *)
 let dm s = s.dealer |> money
 
-(** [dealer_draw s] is the state [s] becomes after the dealer draws cards. *)
-let rec dealer_draw s = 
+(** [pause s] pauses, prints a period, and decrements [s] until it is 0. *)
+let rec pause t =
+  if t <= 0 then print_endline ""
+  else (print_endline "."; Unix.sleep 1; pause (t-1))
+
+(** [dealer_draw s] is the state [s] becomes after the dealer draws a card. *)
+let dealer_draw s = 
   let d = s.deck in
   let d_points = points s.dealer in
+  pause 3;
   if d_points >= 17 then s else
     let r = draw_card d in
-    dealer_draw {deck = (deck r); 
-                 dealer = (make_player (List.append (hand s.dealer) (cards r)) (dm s));
-                 player = s.player}
+    {deck = (deck r); dealer = (make_player (List.append (hand s.dealer)
+                                               (cards r)) (dm s)); player = s.player}
 
 let step s cmd = 
   let d = s.deck in
