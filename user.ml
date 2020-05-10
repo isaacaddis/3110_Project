@@ -62,12 +62,14 @@ let contains s1 s2 =
     try if Str.search_forward re s1 0 > -1 then true else false
     with Not_found -> false
 
-let parse_play_json (json_string:string) : (bool * string) = 
+let parse_play_json (json_string:string) : (bool * string * string * int) = 
   if json_string = "Unauthorized access." then raise Not_found else
   let json = json_from_string json_string in 
   let your_turn = json |> member "your_turn" |> to_bool in
   let status = json |> member "status" |> to_string in 
-  (your_turn, status)
+  let name  = json |> member "name" |> to_string in 
+  let bet = json |> member "bet" |> to_int in 
+  (your_turn, status, name, bet)
 
 let win_message = "You've beat the dealer" 
 
@@ -86,8 +88,8 @@ let rec main session_id () =
   begin
     match parse_play_json response with
     | exception Not_found -> print_endline "You cannot join a full lobby"
-    | (false, _) -> print_endline "Game not started or it's not your turn"
-    | (true, status) ->
+    | (false, _, _, _) -> print_endline "Game not started or it's not your turn"
+    | (true, status, name, _) ->
         begin
           match status with
           | "next" -> 
@@ -95,7 +97,9 @@ let rec main session_id () =
               (action session_id (prompt_game_msg ()))
             in
             print_endline res
-          | x -> print_endline x; exit 0
+          | "win" -> print_endline (name ^ " won!"); exit 0
+          | "loss" -> print_endline (name ^ " lost."); exit 0
+          | "tie" -> print_endline "A draw!"; exit 0
         end
   end;
   main session_id ()

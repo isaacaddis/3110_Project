@@ -66,13 +66,18 @@ let check_start_condition tbl =
 (** [construct_play_json t s] constructs a JSON string of the format
     { 'your_turn': bool, 'status': 'status' }
     Requires: status is either "wait", "win", "tie", "loss", or "next" *)
-let construct_play_json (your_turn:bool) (status: string) =
+let construct_play_json (your_turn:bool) (status: string) name bet =
   "{ \"your_turn\": " ^
   (string_of_bool your_turn) ^ 
   ", \"status\": \"" ^
   status ^
-  "\" }"
+  "\", \"name\": \"" ^
+  name ^
+  "\", \"bet\": " ^
+  (string_of_int bet) ^
+  " }"
 
+(** Effects: Updates the [db] with new paramters *)
 let replace_db session_id name bet st' =
   let usrData' = 
     { name = name;
@@ -81,6 +86,8 @@ let replace_db session_id name bet st' =
   in
   Hashtbl.replace !(db.connected_users) session_id usrData'
 
+(** [handle_next (session_id, action) runs the game action [action] for
+    the user with session id [session_id], if it is their turn *)
 let handle_next (tup:(string*string)) =
   let (session_id, action) = tup in
   try
@@ -96,6 +103,10 @@ let handle_next (tup:(string*string)) =
         match Parser.parse action with
         | Hit -> 
             let st' = step st Hit in
+            replace_db session_id name bet st';
+            Printf.sprintf "Game state updated. Next turn."
+        | Stand ->
+            let st' = step st Stand in
             replace_db session_id name bet st';
             Printf.sprintf "Game state updated. Next turn."
     else Printf.sprintf "Unauthorized access."
@@ -119,31 +130,34 @@ let handle_play (session_id: string) =
             let turn_session_id = List.nth !(keys.session_ids) (turn) in
             if turn_session_id = session_id then
               begin
-              (** { your_turn : bool, status: string*)
               let status = check_st' true (player st) dealer in
               match status with
               | (Blackjack, _ ) -> 
                   next_turn ();
-                  Printf.sprintf "%s" (construct_play_json true "win")
+                  Printf.sprintf 
+                    "%s" (construct_play_json true "win" name bet)
               | (Win, _ ) -> 
                   next_turn ();
-                  Printf.sprintf "%s" (construct_play_json true "win")
+                  Printf.sprintf 
+                    "%s" (construct_play_json true "win" name bet)
               | (Loss, _ ) -> 
                   next_turn ();
-                  Printf.sprintf "%s" (construct_play_json true "loss")
+                  Printf.sprintf 
+                    "%s" (construct_play_json true "loss" name bet)
               | (Draw, _ ) -> 
                   next_turn ();
-                  Printf.sprintf "%s" (construct_play_json true "tie")
+                  Printf.sprintf 
+                    "%s" (construct_play_json true "tie" name bet)
               | (Next, Next) ->
-                  Printf.sprintf "%s" (construct_play_json true "next")
+                  Printf.sprintf 
+                    "%s" (construct_play_json true "next" name bet)
               end
             else
-              Printf.sprintf "%s" (construct_play_json false "wait")
-          | Wait n -> 
-            Printf.sprintf "%s" (construct_play_json false "wait")
-            (**
-            Printf.sprintf "Need 3 players to start game. (%d/3 connected)\n" n
-            *)
+              Printf.sprintf 
+                "%s" (construct_play_json false "wait" name bet)
+          | Wait _ -> 
+            Printf.sprintf 
+            "%s" (construct_play_json false "wait" name bet)
   with Not_found -> Printf.sprintf "Unauthorized access."
   
   
@@ -169,7 +183,7 @@ let handle_response (uri: string) (body_string : string) =
         begin
         let (name, bet) = parse_login_json json in
         match add_user db name bet with
-        | Success (id,tbl) ->
+        | Success (id,_) ->
             (keys.session_ids) := (id :: !(keys.session_ids));
             Printf.sprintf "%s" id
         | Failure -> Printf.sprintf "The table is full."

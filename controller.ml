@@ -52,6 +52,7 @@ let check_st' p_turn (player: Player.t) (dealer: Player.t) =
        print_endline ("Dealer's hand: " ^ hand_as_string dealer);
        (Loss, Win))
     else (Next, Next)
+
 (** [check_st b s] checks if either the player or dealer has won yet, with
     boolean [b] representing if it is the player's turn or not. *)
 let check_st p_turn st =
