@@ -31,7 +31,7 @@ let hand p =
 let top_card p =
   let hand = hand p in
   match hand with
-  | h::t -> to_string h
+  | h::t -> h
   | _ -> failwith "Tried to get top card of player with empty hand"
 
 let hand_as_facedown_string p =
@@ -39,11 +39,8 @@ let hand_as_facedown_string p =
 
 let hand_as_string p =
   let hand = hand p in
-  (* let rec as_string_list = function
-    | [] -> []
-    | x :: xs -> (to_string x) :: (as_string_list xs)
-  in 
-  let lst = as_string_list hand in
-  String.concat ", " lst *)
   cards_to_ascii_string hand
 
+let only_has_cards p v1 v2 =
+  let p_vals = List.map get_val p.hand in
+  (List.mem v1 p_vals) && (List.mem v2 p_vals) && List.length p_vals = 2

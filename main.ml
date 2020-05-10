@@ -90,13 +90,15 @@ let rec game_loop bet p_turn st =
             let st' = step st Double in game_double st'
           else
             if bet * 2 > p_money then
-              (print_endline ("You cannot double down if you do not have more " ^ 
-              "than double your bet money. Please select a different option.");
+              (print_endline ("You cannot double down if you do not have more" ^ 
+              " than double your bet money. Please select a different option.");
               game_loop bet p_turn st)
             else
-              (print_endline ("Cannot double down if dealer does not have more " ^ 
-              "than double the bet money. Please select a different option.");
+              (print_endline ("Cannot double down if dealer does not have " ^ 
+              "more than double the bet money. Please select a different " ^ 
+              "option.");
               game_loop bet p_turn st)
+        | Advice -> print_endline (get_advice st); game_loop bet p_turn st
         | Unknown -> 
           print_endline ("Unknown command. Please select a command from the " ^
             "options above.");
@@ -108,6 +110,7 @@ let rec game_loop bet p_turn st =
 (** [read_bet inp] runs the game state if [inp] is a proper integer bet,
     and asks for reinput if the [inp] is not appropriate.*)
 let rec read_bet inp =
+  if inp = "quit" then quit();
   try int_of_string inp
   with (Failure e) ->
     print_endline ("I could not understand that input. Please input an " ^

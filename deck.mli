@@ -24,3 +24,7 @@ val draw_card : deck -> res
 
 (** [cards_to_string r] returns a string list of the cards drawn in [r]. *)
 val cards_to_string : res -> string list
+
+(** [test_deck c] creates a non-randomized deck based off the int in pairs [c]
+    representing individual cards*)
+val test_deck : (int * int) list -> deck
