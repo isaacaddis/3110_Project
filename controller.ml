@@ -95,4 +95,4 @@ let get_stats () =
     file |> to_assoc |> List.assoc "money" |> to_int
   else
     let file = open_out "stats.json" in
-    fprintf file "%s\n" "{\n\t\"money\": 500\n}"; close_out file; 1000
+    fprintf file "%s\n" "{\n\t\"money\": 500\n}"; close_out file; 500

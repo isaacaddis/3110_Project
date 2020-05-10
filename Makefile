@@ -7,7 +7,7 @@ MAIN=main.byte
 CLIENT=user.byte
 SERVER=serve.byte
 OCAMLBUILD=corebuild -cflag -thread -use-ocamlfind -pkgs cohttp-lwt-unix,yojson,str
-PKGS=unix,oUnit,str,ANSITerminal,cohttp-lwt-unix,lwt,cohttp,yojson
+PKGS=unix,oUnit,str,cohttp-lwt-unix,lwt,cohttp,yojson
 
 default: build
 	utop
