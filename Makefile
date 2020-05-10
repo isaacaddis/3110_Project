@@ -5,7 +5,7 @@ MLIS=$(MODULES:=.mli)
 TEST=test.byte
 MAIN=main.byte
 OCAMLBUILD=ocamlbuild -use-ocamlfind 
-PKGS=unix,oUnit,str,ANSITerminal, yojson
+PKGS=unix,oUnit,str,ANSITerminal,yojson
 
 default: build
 	utop
@@ -33,7 +33,7 @@ bisect: clean test
 	bisect-ppx-report -I _build -html report bisect0001.out
 
 zip:
-	zip src.zip *.ml* _tags Makefile  
+	zip src.zip *.ml* _tags Makefile INSTALL.txt
 
 docs: docs-public docs-private
 

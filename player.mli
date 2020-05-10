@@ -16,6 +16,9 @@ val hand : t -> Card.t list
 (** [top_card p] represents the top card that [p] has as a string. *)
 val top_card : t -> string
 
-(** [hand_as_string p] represents the hand of [p] as a string. *)
+(** [top_card p] represents a two-card hand with one hidden as ASCII art. *)
+val hand_as_facedown_string : t -> string
+
+(** [hand_as_string p] represents the hand of [p] as ASCII art. *)
 val hand_as_string : t -> string
 
