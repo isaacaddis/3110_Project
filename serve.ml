@@ -115,7 +115,6 @@ let handle_next (tup:(string*string)) =
   let (session_id, action) = tup in
   try
     let usrData = Hashtbl.find !(db.connected_users) (session_id) in
-    let dealer = !(db.dealer) in
     let name = usrData.name in
     let bet = usrData.bet in
     let st = usrData.state in
@@ -132,6 +131,7 @@ let handle_next (tup:(string*string)) =
             let st' = step st Stand in
             replace_db session_id name bet st';
             Printf.sprintf "Game state updated. Next turn."
+        | _ -> exit 0
     else Printf.sprintf "Unauthorized access."
   with Not_found -> Printf.sprintf "Unauthorized access."
 
@@ -174,6 +174,7 @@ let handle_play (session_id: string) =
               | (Next, Next) ->
                   Printf.sprintf 
                     "%s" (construct_play_json true "next" name bet)
+              | _ -> exit 0
               end
             else
               Printf.sprintf 

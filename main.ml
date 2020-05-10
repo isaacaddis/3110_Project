@@ -100,7 +100,7 @@ let rec game_loop bet p_turn st =
 let rec read_bet inp =
   if inp = "quit" then quit();
   try int_of_string inp
-  with (Failure e) ->
+  with (Failure _) ->
     print_endline ("I could not understand that input. Please input an " ^
       "integer number of dollars to bet.");
     print_string "$";
@@ -127,8 +127,8 @@ let rec play_game st () =
   let player_money = st |> player |> money in
   let dealer_money = st |> dealer |> money in
   check_bankrupt player_money;
-  print_string ("Welcome to blackjack! Get closer to 21 than the dealer without
-    busting! You have $" ^ (string_of_int player_money) ^ 
+  print_string ("Welcome to blackjack! Get closer to 21 than the dealer" ^ 
+    " without busting! You have $" ^ (string_of_int player_money) ^ 
     ". Enter bet amount in dollars:\n$");
   let bet = read_bet (read_line ()) in
   if bet <= player_money && bet <= dealer_money && bet > 0 then

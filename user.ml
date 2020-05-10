@@ -41,7 +41,7 @@ let login name bet =
 let play session_id =
   Client.post 
     ~body:(Cohttp_lwt.Body.of_string (construct_play_json (session_id)) )
-    (Uri.of_string "http://localhost:8000/play") >>= fun (resp, body) ->
+    (Uri.of_string "http://localhost:8000/play") >>= fun (_, body) ->
   body |> Cohttp_lwt.Body.to_string >|= fun body ->
   body
 
@@ -49,7 +49,7 @@ let action (session_id: string) (action: string) =
   Client.post 
     ~body:
       (Cohttp_lwt.Body.of_string (construct_play_response session_id action))
-    (Uri.of_string "http://localhost:8000/next") >>= fun (resp, body) ->
+    (Uri.of_string "http://localhost:8000/next") >>= fun (_, body) ->
   body |> Cohttp_lwt.Body.to_string >|= fun body ->
   body
 
@@ -100,6 +100,7 @@ let rec main session_id () =
           | "win" -> print_endline (name ^ " won!"); exit 0
           | "loss" -> print_endline (name ^ " lost."); exit 0
           | "tie" -> print_endline "A draw!"; exit 0
+          | _ -> print_endline "Error in user.ml."; exit 0
         end
   end;
   main session_id ()
