@@ -49,9 +49,9 @@ let next_turn_and_leave () =
     end
   else ()
 
-(** [check_user_connected id] is [Some x] if [id] is connected *)
+(* [check_user_connected id] is [Some x] if [id] is connected
 let check_user_connected tbl (session_id: string) : user_data option=
-  Hashtbl.find_opt tbl session_id
+  Hashtbl.find_opt tbl session_id *)
 
 (** [is_full t] is [false] when there are 2 players or less at the table [t],
     [true] otherwise. *)

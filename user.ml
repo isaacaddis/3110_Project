@@ -56,11 +56,11 @@ let action (session_id: string) (action: string) =
 let minisleep (sec: float) =
   Unix.sleepf sec
 
-let contains s1 s2 = 
+(* let contains s1 s2 = 
   let re = Str.regexp_string s2
   in
     try if Str.search_forward re s1 0 > -1 then true else false
-    with Not_found -> false
+    with Not_found -> false *)
 
 let parse_play_json (json_string:string) : (bool * string * string * int) = 
   if json_string = "Unauthorized access." then raise Not_found else
@@ -71,7 +71,7 @@ let parse_play_json (json_string:string) : (bool * string * string * int) =
   let bet = json |> member "bet" |> to_int in 
   (your_turn, status, name, bet)
 
-let win_message = "You've beat the dealer" 
+(* let win_message = "You've beat the dealer"  *)
 
 let quit () =
   exit 0

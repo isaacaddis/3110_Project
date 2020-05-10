@@ -106,15 +106,6 @@ let rec read_bet inp =
     print_string "$";
     read_bet (read_line ())
 
-(** [print_result p] prints the result depending on the dollars that you
-    gained or lost. *)
-let print_result pts =
-  let p = int_of_float pts in
-  if p = 0 then print_endline "You did not win or lose any money."
-  else if p < 0 then 
-    print_endline ("You lost " ^ string_of_int (-p) ^ " dollars.")
-  else print_endline ("You won " ^ string_of_int p ^ " dollars.")
-
 (** [check_bankrupt m] quites the game if [m] is equal to 0. *)
 let check_bankrupt money =
   if money = 0 then
