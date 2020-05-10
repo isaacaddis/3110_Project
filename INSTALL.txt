@@ -1,6 +1,17 @@
-To run the program, you must first run [make build], to create the
-[_build] directory.
+To run the program, you must first install some things. Run the following
+commands:
+
+- opam install core
+- opam install tls
+
+Install gmp and pkg-config. To do this on mac, run
+-brew install gmp
+-brew install pkg-config
+
+Then run [make build], to create the [_build] directory.
 
 After running [make build], you can run [make test] to test the cases we have
-created for the projected in [test.ml], and you can run [make play] to test
-the functionality of the Blackjack game we have created so far.
+created for the projected in [test.ml], and you can run [make play] to play
+the Blackjack game we have created to play solo, or if you want to play
+using our server/client, you can run [make server] in one terminal, and run
+[make client] in three other terminals to play.
