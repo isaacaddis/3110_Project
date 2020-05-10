@@ -57,10 +57,7 @@ let check_st p_turn st =
        (Loss, Win))
     else (Next, Next)
 
-(** [check_st_d s] checks if the player or dealer has won in a double down. *)
-let check_st_d st =
-  let player = player st in
-  let dealer = dealer st in
+let check_st_d' (player: Player.t) (dealer: Player.t) =
   let p_cond = get_player_condition player in
   let d_cond = get_player_condition dealer in
   match p_cond with
@@ -79,6 +76,12 @@ let check_st_d st =
         if x > y then (DWin, Loss)
         else if x = y then (Draw, Draw)
         else (DLoss, Win)
+
+(** [check_st_d s] checks if the player or dealer has won in a double down. *)
+let check_st_d st =
+  let player = player st in
+  let dealer = dealer st in
+  check_st_d' player dealer
 
 let next_round s win bet = match win with
   | Blackjack -> step_round s 1 bet

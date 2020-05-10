@@ -4,6 +4,9 @@ open Cohttp_lwt_unix
 open State
 open Yojson
 open Yojson.Basic.Util
+open Controller
+open Player
+open Deck
 
 type user_data = { name : string; bet: int;  state : State.t }
 
@@ -12,8 +15,11 @@ type v = ((string, user_data) Hashtbl.t)
 let connected_users : v = Hashtbl.create 3
 
 (* [db] is the state of the game *)
-type db = { turn: int ref; connected_users: v ref }
-let db = { turn = ref 0; connected_users = ref connected_users};;
+type db = { dealer: Player.t ref; turn: int ref; connected_users: v ref }
+
+let d = shuffle_deck ()
+let d' = draw_two_cards d
+let db = { dealer = ref (make_player (cards d') 50000); turn = ref 0; connected_users = ref connected_users}
 
 type keys = { session_ids: string list ref }
 let keys = { session_ids = ref [] }
@@ -56,6 +62,9 @@ type start_conditions = Start| Wait of int
 let check_start_condition tbl = 
   if is_full tbl then Start else Wait (Hashtbl.length tbl)
 
+let construct_play_json (your_turn:bool) (state: State.t) =
+  failwith "unimplemented"
+
 (** [handle_play s] handles the main game loop response for session_id [s]
     Requires: [s] is a session_id that is in [db]
     Effects: prints to console *)
@@ -66,13 +75,14 @@ let handle_play ( session_id: string) =
     | res -> 
           let name = res.name in
           let bet = res.bet in
-          let state  = res.state in
+          let st  = res.state in
           match check_start_condition !(db.connected_users) with
           | Start ->
             let turn = !(db.turn) in
             let turn_session_id = List.nth !(keys.session_ids) (turn) in
             if turn_session_id = session_id then
               begin
+              (** { turn : bool, *)
               Printf.sprintf "Your turn: %s" name
               end
             else
