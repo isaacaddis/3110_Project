@@ -2,6 +2,7 @@ open Lwt
 open Cohttp
 open Cohttp_lwt_unix
 open Yojson
+open Yojson.Basic.Util
 
 type state = { session_id: string ref }
 
@@ -45,15 +46,21 @@ let contains s1 s2 =
     try if Str.search_forward re s1 0 > -1 then true else false
     with Not_found -> false
 
+let parse_play_json (json_string:string) : (bool * string) = 
+  if json_string = "Unauthorized access." then raise Not_found else
+  let json = json_from_string json_string in 
+  let your_turn = json |> member "your_turn" |> to_bool in
+  let status = json |> member "status" |> to_string in 
+  (your_turn, status)
+
 let rec main session_id () = 
   minisleep 1.;
   let response = Lwt_main.run (play session_id) in
   begin
-  match contains response "Your turn:" with
-  | true -> 
-      print_endline "stand|hit"
-  | false ->
-      print_endline response
+    match parse_play_json response with
+    | exception Not_found -> print_endline "You cannot join a full lobby"
+    | (false, _) -> print_endline "Game not started or it's not your turn"
+    | (true, status) -> print_endline status
   end;
   main session_id ()
 

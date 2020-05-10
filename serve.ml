@@ -7,6 +7,7 @@ open Yojson.Basic.Util
 open Controller
 open Player
 open Deck
+open State
 
 type user_data = { name : string; bet: int;  state : State.t }
 
@@ -62,8 +63,15 @@ type start_conditions = Start| Wait of int
 let check_start_condition tbl = 
   if is_full tbl then Start else Wait (Hashtbl.length tbl)
 
-let construct_play_json (your_turn:bool) (state: State.t) =
-  failwith "unimplemented"
+(** [construct_play_json t s] constructs a JSON string of the format
+    { 'your_turn': bool, 'status': 'status' }
+    Requires: status is either "wait", "win", "tie", "loss", or "next" *)
+let construct_play_json (your_turn:bool) (status: string) =
+  "{ \"your_turn\": " ^
+  (string_of_bool your_turn) ^ 
+  ", \"status\": \"" ^
+  status ^
+  "\" }"
 
 (** [handle_play s] handles the main game loop response for session_id [s]
     Requires: [s] is a session_id that is in [db]
@@ -73,6 +81,7 @@ let handle_play ( session_id: string) =
     let state = Hashtbl.find !(db.connected_users) (session_id) in
     match state with
     | res -> 
+          let dealer = !(db.dealer) in
           let name = res.name in
           let bet = res.bet in
           let st  = res.state in
@@ -82,13 +91,31 @@ let handle_play ( session_id: string) =
             let turn_session_id = List.nth !(keys.session_ids) (turn) in
             if turn_session_id = session_id then
               begin
-              (** { turn : bool, *)
-              Printf.sprintf "Your turn: %s" name
+              (** { your_turn : bool, status: string*)
+              let status = check_st' true (player st) dealer in
+              match status with
+              | (Blackjack, _ ) -> 
+                  next_turn ();
+                  Printf.sprintf "%s" (construct_play_json true "win")
+              | (Win, _ ) -> 
+                  next_turn ();
+                  Printf.sprintf "%s" (construct_play_json true "win")
+              | (Loss, _ ) -> 
+                  next_turn ();
+                  Printf.sprintf "%s" (construct_play_json true "loss")
+              | (Draw, _ ) -> 
+                  next_turn ();
+                  Printf.sprintf "%s" (construct_play_json true "tie")
+              | (Next, Next) ->
+                  Printf.sprintf "%s" (construct_play_json true "next")
               end
             else
-              Printf.sprintf "Awaiting turn: %s" turn_session_id
+              Printf.sprintf "%s" (construct_play_json false "wait")
           | Wait n -> 
+            Printf.sprintf "%s" (construct_play_json false "wait")
+            (**
             Printf.sprintf "Need 3 players to start game. (%d/3 connected)\n" n
+            *)
   with Not_found -> Printf.sprintf "Unauthorized access."
   
   
