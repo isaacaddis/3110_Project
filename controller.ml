@@ -66,6 +66,7 @@ let check_st_d' (player: Player.t) (dealer: Player.t) =
     match d_cond with
     | Natural -> (DLoss, Win)
     | Bust -> (DWin, Loss)
+    | Int y when y < 17 -> (Next, Next)
     | Int y ->
       if x > y then (DWin, Loss)
       else if x = y then (Draw, Draw)

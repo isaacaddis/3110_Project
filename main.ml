@@ -9,7 +9,7 @@ open Yojson.Basic.Util
     the player, and if it doesn't exist, it makes a file 'stats.json'. *)
 let get_stats () =
   if Sys.file_exists "stats.json" then
-    (** read in data from stats *)
+    (* read in data from stats *)
     let file = Yojson.Basic.from_file "stats.json" in
     file |> to_assoc |> List.assoc "money" |> to_int
   else
@@ -43,19 +43,23 @@ let print_st (p_turn:bool) st =
   print_endline player_msg;
   print_endline dealer_msg
 
+(** [can_double s] is true when the player in state [s] is able to
+    double down*)
+let can_double s =
+  match (s |> player |> points) , (s |> player |> hand |> List.length) with
+  | 9, 2 | 10, 2 | 11, 2 -> true
+  | _ -> false
+
 (** [game_msg s] prints the game message for state [s] and returns
     the user input afterwards. *)
 let game_msg (s : State.t) () =
-  begin match s |> player |> points with
-    | 9 | 10 | 11 when s |> player |> hand |> List.length = 2
-      -> print_endline "[stand]/[hit]/[double down]/[quit]?" 
-    | _ -> print_endline "[stand]/[hit]/[quit]?"
-  end;
+  if can_double s then print_endline "[stand]/[hit]/[double down]/[quit]?" 
+  else print_endline "[stand]/[hit]/[quit]?";
   print_string "> ";
   read_line ()
 
 (** [game_double s] plays out game with state [s] after doubling down. *)
-let game_double st =
+let rec game_double st =
   print_endline "";
   print_st false st;
   let status = check_st_d st in
@@ -63,6 +67,7 @@ let game_double st =
   | (DWin, _) -> print_endline "You won double!\n"; DWin
   | (DLoss, _) -> print_endline "You lost double!\n"; DLoss
   | (Draw, _) -> print_endline "You tied!\n"; Draw
+  | (Next, Next) -> game_double (step st Stand) 
   | _ -> failwith "game_double should only be called after double down."
 
 (** [game_loop b p s] loops the game with state [s] and boolean for player
@@ -91,17 +96,23 @@ let rec game_loop bet p_turn st =
         | Double -> 
           let p_money = st |> player |> money in
           let d_money = st |> dealer |> money in
-          if bet * 2 <= p_money && bet * 2 <= d_money then
+          if bet * 2 <= p_money && bet * 2 <= d_money && can_double st then
             let st' = step st Double in game_double st'
           else
           if bet * 2 > p_money then
             (print_endline ("You cannot double down if you do not have more" ^ 
-                            " than double your bet money. Please select a different option.");
+                            " than double your bet money. "^
+                            "Please select a different option.");
+             game_loop bet p_turn st)
+          else if (st |> can_double |> not) then
+            (print_endline ("You cannot double down if your hand's value "^
+                            "is not 9, 10, or 11, or if you have hit. " ^
+                            "Please select a different option.");
              game_loop bet p_turn st)
           else
             (print_endline ("Cannot double down if dealer does not have " ^ 
-                            "more than double the bet money. Please select a different " ^ 
-                            "option.");
+                            "more than double the bet money. " ^ 
+                            "Please select a different option.");
              game_loop bet p_turn st)
         | Advice -> print_endline (get_advice st); game_loop bet p_turn st
         | Unknown -> 
