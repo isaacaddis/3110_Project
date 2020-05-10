@@ -165,7 +165,8 @@ let controller_tests =
 
   let p_win_hs'' = [(10, 1); (5, 1); (10, 2); (4, 2); (2, 1); (3, 1); (2, 2)] 
                    |> make_tstate 
-                   |> step in let p_win_hs' = step (p_win_hs'' Hit) Hit |> step in 
+                   |> step in let 
+    p_win_hs' = step (p_win_hs'' Hit) Hit |> step in 
   let p_win_hs = p_win_hs' Stand in
   let p_loss_hs = step (p_win_hs'' Hit) Stand in
 
