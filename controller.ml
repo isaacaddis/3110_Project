@@ -12,7 +12,7 @@ type win = win_condition * win_condition
     hand. *)
 let get_player_condition player =
   match points player with
-  | 21 -> Natural
+  | 21 when player |> hand |> List.length = 2 -> Natural
   | n when n > 21 -> Bust
   | n -> Int n
 
@@ -21,18 +21,11 @@ let check_st' p_turn (player: Player.t) (dealer: Player.t) =
   let d_cond = get_player_condition dealer in
   match p_cond with
   | Bust -> (Loss, Win)
-  | Natural when p_turn ->
+  | Natural ->
     begin
       match d_cond with
       | Natural -> (Draw, Draw)
       | _ -> (Blackjack, Loss)
-    end
-  | Natural -> begin
-      match d_cond with
-      | Natural -> (Draw, Draw)
-      | Int y when y >= 17 -> (Win, Loss)
-      | Bust -> (Win, Loss)
-      | Int y -> (Next, Next)
     end
   | Int x ->
     if not p_turn then
@@ -48,11 +41,7 @@ let check_st' p_turn (player: Player.t) (dealer: Player.t) =
             end
           else (Next, Next)
       end
-    else if d_cond = Natural then
-      (print_endline ""; print_endline "Dealer has a blackjack!";
-       print_endline ("Your hand:\n" ^ hand_as_string player);
-       print_endline ("Dealer's hand:\n" ^ hand_as_string dealer);
-       (Loss, Win))
+    else if d_cond = Natural then (Loss, Blackjack)
     else (Next, Next)
 
 (** [check_st b s] checks if either the player or dealer has won yet, with
@@ -75,12 +64,12 @@ let check_st_d' (player: Player.t) (dealer: Player.t) =
     end
   | Int x ->
     match d_cond with
-      | Natural -> (DLoss, Win)
-      | Bust -> (DWin, Loss)
-      | Int y ->
-        if x > y then (DWin, Loss)
-        else if x = y then (Draw, Draw)
-        else (DLoss, Win)
+    | Natural -> (DLoss, Win)
+    | Bust -> (DWin, Loss)
+    | Int y ->
+      if x > y then (DWin, Loss)
+      else if x = y then (Draw, Draw)
+      else (DLoss, Win)
 
 (** [check_st_d s] checks if the player or dealer has won in a double down. *)
 let check_st_d st =

@@ -18,7 +18,7 @@ let eq_test name a b = (name >:: fun _ -> assert_equal a b)
 
 (** [ex_test name func a b] is a test that checks that [func b] raises [a]*)
 let ex_test name func a b = (name >:: fun _ -> assert_raises a 
-  (fun () -> func b))
+                                 (fun () -> func b))
 
 let card_tests = [
   eq_test "to_string jack" (make_card 10 1 |> to_string) "J of Diamonds";
@@ -178,7 +178,7 @@ let controller_tests =
     step (make_tstate [(10, 1); (7, 1); (5, 2); (6, 2); (6, 1)]) Double in
   [
     eq_test "Double blackjack is a draw" (check_st true double_nat) (Draw, Draw);
-    eq_test "Dealer natural is a loss" (check_st true dealer_nat) (Loss, Win);
+    eq_test "Dealer natural is a loss" (check_st true dealer_nat) (Loss, Blackjack);
     eq_test "Player blackjack" (check_st true p_nat) (Blackjack, Loss);
     eq_test "Both hit into 21 is a draw" (check_st false d21) (Draw, Draw);
     eq_test "Player loses upon bust" (check_st false p_bust) (Loss, Win);
